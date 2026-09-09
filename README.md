@@ -1,6 +1,6 @@
 # SwissScope
 
-A personal Swiss tech job targeting tool. Implementation currently covers **Chunk 1: Prisma schema and PostgreSQL setup** only.
+A personal Swiss tech job targeting tool. Implementation currently covers **Chunk 1: Prisma schema and PostgreSQL setup** and **Chunk 2: SwissDevJobs fetch/log scraper**.
 
 ## Local setup
 
@@ -61,11 +61,23 @@ docker compose exec -T postgres psql -U swissscope -d swissscope -v ON_ERROR_STO
 
 The check creates temporary fixture rows inside a transaction and rolls them back. With an existing PostgreSQL installation, run the same file using `psql -h 127.0.0.1 -U swissscope -d swissscope -v ON_ERROR_STOP=1 -f src/prisma/check-schema.sql` (adjust host and port as needed).
 
-The next chunk, after confirmation, is a SwissDevJobs scraper that fetches and logs normalized results without saving to the database.
+## Scraper Check
+
+Chunk 2 adds a TypeScript SwissDevJobs scraper that fetches postings and logs normalized rows only. It does not save anything to PostgreSQL yet.
+
+Run it from the backend folder:
+
+```sh
+npm run scrape:swissdevjobs
+```
+
+The scraper tries the SwissDevJobs public API and RSS feed first. During verification, direct requests to `swissdevjobs.ch` redirected to JobCopilot/security pages, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint and logs normalized job rows from there.
+
+The next chunk, after confirmation, connects the scraper output to Prisma and saves jobs to PostgreSQL.
 
 ## Verification notes
 
-Validated with Node 24.11.0 and Prisma 7.10.0: schema formatting/validation, client generation, migration against an isolated local PostgreSQL database, and the transactional schema checks. Docker Compose configuration was validated; the Docker container itself was not started during verification.
+Validated with Node 24.11.0 and Prisma 7.10.0: schema formatting/validation, client generation, migration against an isolated local PostgreSQL database, and the transactional schema checks. Docker Compose configuration was validated; the Docker container itself was not started during initial schema verification. Chunk 2 was typechecked with TypeScript and verified with `npm run scrape:swissdevjobs`, which logged 20 jobs.
 
 The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app; this chunk only contains local database tooling.
 # SwissScope

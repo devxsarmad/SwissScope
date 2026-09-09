@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "db:validate": "prisma validate",
     "db:format": "prisma format",
@@ -11,11 +13,20 @@
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:status": "prisma migrate status",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "typecheck": "tsc --noEmit",
+    "scrape:swissdevjobs": "tsx src/jobs/scrapeRunner.ts swissdevjobs"
   },
   "dependencies": {
     "@prisma/client": "^7.0.0",
+    "axios": "^1.20.0",
+    "cheerio": "^1.2.0",
     "dotenv": "^17.0.0"
   },
-  "devDependencies": { "prisma": "^7.0.0" }
+  "devDependencies": {
+    "@types/node": "^26.5.0",
+    "prisma": "^7.0.0",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
 }
