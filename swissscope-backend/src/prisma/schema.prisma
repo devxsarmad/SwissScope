@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  // Store a trimmed, consistently capitalized name when ingestion is added.
+  name      String   @unique
+  jobs      Job[]
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  title       String
+  description String   @db.Text
+  techStack   String[] @default([])
+  location    String?
+  // Canonical posting URL is the deduplication key for repeated scrapes.
+  url         String   @unique
+  // Preserve ranges such as "80–100%"; null means the site did not specify it.
+  workload    String?
+  scrapedAt   DateTime @default(now()) @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([companyId])
+  @@index([location])
+  @@index([scrapedAt])
+}
