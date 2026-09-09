@@ -15,13 +15,16 @@
     "db:status": "prisma migrate status",
     "db:studio": "prisma studio",
     "typecheck": "tsc --noEmit",
-    "scrape:swissdevjobs": "tsx src/jobs/scrapeRunner.ts swissdevjobs"
+    "scrape:swissdevjobs": "tsx src/jobs/scrapeRunner.ts swissdevjobs",
+    "scrape:swissdevjobs:save": "tsx src/jobs/scrapeRunner.ts swissdevjobs --save"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.0.0",
     "axios": "^1.20.0",
     "cheerio": "^1.2.0",
-    "dotenv": "^17.0.0"
+    "dotenv": "^17.0.0",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/node": "^26.5.0",
