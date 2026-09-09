@@ -17,10 +17,16 @@
     "db:studio": "prisma studio",
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "test": "tsx --test src/**/*.test.ts",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "scrape:swissdevjobs": "tsx src/jobs/scrapeRunner.ts swissdevjobs",
-    "scrape:swissdevjobs:save": "tsx src/jobs/scrapeRunner.ts swissdevjobs --save"
+    "scrape:swissdevjobs:save": "tsx src/jobs/scrapeRunner.ts swissdevjobs --save",
+    "scrape:all": "tsx src/jobs/scrapeRunner.ts all",
+    "scrape:all:save": "tsx src/jobs/scrapeRunner.ts all --save",
+    "scrape:jobsch": "tsx src/jobs/scrapeRunner.ts jobsch",
+    "scrape:jobsch:save": "tsx src/jobs/scrapeRunner.ts jobsch --save",
+    "scrape:jobup": "tsx src/jobs/scrapeRunner.ts jobup",
+    "scrape:jobup:save": "tsx src/jobs/scrapeRunner.ts jobup --save"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

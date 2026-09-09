@@ -69,7 +69,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
   }
 
   private async tryFetchApi(): Promise<ScraperPayload | null> {
-    const url = new URL(this.config.jobsLightPath, this.config.baseUrl);
+    const url = new URL(requireConfigValue(this.config.jobsLightPath, "jobsLightPath"), this.config.baseUrl);
     url.searchParams.set("_cb", Date.now().toString());
 
     const response = await this.tryRequest(url.toString());
@@ -83,7 +83,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
   }
 
   private async tryFetchRss(): Promise<ScraperPayload | null> {
-    const url = new URL(this.config.rssPath, this.config.baseUrl);
+    const url = new URL(requireConfigValue(this.config.rssPath, "rssPath"), this.config.baseUrl);
     const response = await this.tryRequest(url.toString());
     if (!response) return null;
 
@@ -95,7 +95,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
   }
 
   private async fetchTelegramFeed(): Promise<ScraperPayload> {
-    const response = await this.request(this.config.telegramFeedUrl, this.config.fallbackTimeoutMs);
+    const response = await this.request(requireConfigValue(this.config.telegramFeedUrl, "telegramFeedUrl"), this.config.fallbackTimeoutMs);
     if (typeof response.data !== "string") {
       throw new Error("SwissDevJobs fallback feed returned a non-HTML response.");
     }
@@ -104,7 +104,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
   }
 
   private async tryFetchReaderFeed(): Promise<ScraperPayload | null> {
-    const response = await this.tryRequest(this.config.readerFeedUrl, this.config.fallbackTimeoutMs);
+    const response = await this.tryRequest(requireConfigValue(this.config.readerFeedUrl, "readerFeedUrl"), this.config.fallbackTimeoutMs);
     if (typeof response?.data !== "string" || !response.data.includes("SwissDevJobs")) {
       return null;
     }
@@ -201,6 +201,14 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
   private parseReaderMarkdown(markdown: string): RawJob[] {
     return dedupeJobs(extractJobsFromReaderMarkdown(markdown, this.config.baseUrl)).slice(0, this.config.maxJobs);
   }
+}
+
+function requireConfigValue(value: string | undefined, fieldName: string): string {
+  if (!value) {
+    throw new Error(`SwissDevJobs scraper requires config field ${fieldName}.`);
+  }
+
+  return value;
 }
 
 function tryParseJson(data: unknown): unknown {
