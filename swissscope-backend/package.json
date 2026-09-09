@@ -14,6 +14,7 @@
     "db:generate": "prisma generate",
     "db:status": "prisma migrate status",
     "db:studio": "prisma studio",
+    "test": "tsx --test src/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "scrape:swissdevjobs": "tsx src/jobs/scrapeRunner.ts swissdevjobs",
     "scrape:swissdevjobs:save": "tsx src/jobs/scrapeRunner.ts swissdevjobs --save"
