@@ -2,6 +2,7 @@ import axios, { type AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 import { BaseScraper } from "../base/BaseScraper.js";
 import { cleanText, normalizeJob, toAbsoluteUrl, type NormalizedJob, type RawJob } from "../../utils/normalizeData.js";
+import { isRelevantSwissTechJob } from "../../services/jobRelevance.service.js";
 
 const SOURCE = "swissdevjobs";
 
@@ -63,7 +64,8 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
           baseUrl: this.config.baseUrl,
         }),
       )
-      .filter((job) => job.title && job.company && job.url);
+      .filter((job) => job.title && job.company && job.url)
+      .filter(isRelevantSwissTechJob);
   }
 
   private async tryFetchApi(): Promise<ScraperPayload | null> {
@@ -261,10 +263,16 @@ function extractJobsFromReaderMarkdown(markdown: string, baseUrl: string): RawJo
     .map(cleanText)
     .filter(Boolean);
   const jobs: RawJob[] = [];
+  let postContext = "";
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
-    if (!line.includes(" | ") || !line.includes("➡️")) continue;
+    if (!line.includes(" | ") || !line.includes("➡️")) {
+      if (isPostContextLine(line)) {
+        postContext = line;
+      }
+      continue;
+    }
 
     const [title, company] = splitTitleAndCompany(line.replace(/^.*?➡️\s*/u, ""));
     const metaLine = lines[index + 1] ?? "";
@@ -275,13 +283,20 @@ function extractJobsFromReaderMarkdown(markdown: string, baseUrl: string): RawJo
       company,
       location: extractLocation(metaLine),
       url: toAbsoluteUrl(extractFirstUrl(urlLine), baseUrl),
-      description: `${line} ${metaLine}`,
-      techStack: extractTechTags(`${line} ${metaLine}`),
-      workload: extractWorkload(`${line} ${metaLine}`),
+      description: `${postContext} ${line} ${metaLine}`,
+      techStack: extractTechTags(`${postContext} ${line} ${metaLine}`),
+      workload: extractWorkload(`${postContext} ${line} ${metaLine}`),
     });
   }
 
   return jobs.filter(hasRequiredFields);
+}
+
+function isPostContextLine(value: string): boolean {
+  if (!value || value.startsWith("Title:") || value.startsWith("URL Source:")) return false;
+  if (/^(?:Markdown Content:|August \d+|PS\.|❤|🔥|\[|_)/i.test(value)) return false;
+  if (/^https?:\/\//i.test(value)) return false;
+  return value.length > 20;
 }
 
 function stripMarkdown(value: string): string {

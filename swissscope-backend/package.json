@@ -12,6 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
+    "db:prune-irrelevant": "tsx src/jobs/pruneIrrelevantJobs.ts",
     "db:status": "prisma migrate status",
     "db:studio": "prisma studio",
     "dev": "tsx watch src/server.ts",

@@ -2,11 +2,17 @@ import { prisma } from "../prisma/client.js";
 import type { NormalizedJob } from "../utils/normalizeData.js";
 import { findOrCreateCompany } from "./company.service.js";
 import { calculateMatchScore } from "./matchScore.service.js";
+import { isRelevantSwissTechJob } from "./jobRelevance.service.js";
 
 export type SaveJobsResult = {
   total: number;
   created: number;
   updated: number;
+};
+
+export type PruneJobsResult = {
+  scanned: number;
+  deleted: number;
 };
 
 export type JobFilters = {
@@ -85,6 +91,7 @@ export async function listJobs(filters: JobFilters = {}) {
 
   return jobs
     .map(toJobResponse)
+    .filter(isRelevantSavedJob)
     .filter((job) => filters.minScore === undefined || job.matchScore.score >= filters.minScore)
     .sort((a, b) => b.matchScore.score - a.matchScore.score || b.scrapedAt.localeCompare(a.scrapedAt));
 }
@@ -98,6 +105,38 @@ export async function getJobById(id: string) {
   });
 
   return job ? toJobResponse(job) : null;
+}
+
+export async function pruneIrrelevantJobs(): Promise<PruneJobsResult> {
+  const jobs = await prisma.job.findMany({
+    include: {
+      company: true,
+    },
+  });
+  const irrelevantJobs = jobs.map(toJobResponse).filter((job) => !isRelevantSavedJob(job));
+
+  if (irrelevantJobs.length > 0) {
+    await prisma.job.deleteMany({
+      where: {
+        id: {
+          in: irrelevantJobs.map((job) => job.id),
+        },
+      },
+    });
+  }
+
+  await prisma.company.deleteMany({
+    where: {
+      jobs: {
+        none: {},
+      },
+    },
+  });
+
+  return {
+    scanned: jobs.length,
+    deleted: irrelevantJobs.length,
+  };
 }
 
 type JobWithCompany = Awaited<ReturnType<typeof prisma.job.findMany<{ include: { company: true } }>>>[number];
@@ -122,4 +161,20 @@ function toJobResponse(job: JobWithCompany) {
     },
     matchScore,
   };
+}
+
+type JobResponse = ReturnType<typeof toJobResponse>;
+
+function isRelevantSavedJob(job: JobResponse): boolean {
+  return isRelevantSwissTechJob({
+    source: "database",
+    title: job.title,
+    company: job.company.name,
+    location: job.location,
+    url: job.url,
+    description: job.description,
+    techStack: job.techStack,
+    workload: job.workload,
+    scrapedAt: job.scrapedAt,
+  });
 }
