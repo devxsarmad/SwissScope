@@ -2,7 +2,7 @@
 
 SwissScope is a personal Swiss tech job intelligence tool. It collects software engineering roles, normalizes the data, stores postings in PostgreSQL, and prepares them for skill-based ranking so outreach can focus on the companies that best match a modern full-stack profile.
 
-The backend is built with TypeScript, Express, Node.js, Prisma, PostgreSQL, Axios, and Cheerio. The current implementation includes a local database setup, a SwissDevJobs scraper, durable job/company saving, a standalone keyword scoring service, and read APIs for jobs and companies.
+The backend is built with TypeScript, Express, Node.js, Prisma, PostgreSQL, Axios, and Cheerio. The frontend is a Next.js TypeScript app with Tailwind CSS and shadcn/ui. The current implementation includes a local database setup, a SwissDevJobs scraper, durable job/company saving, a standalone keyword scoring service, read APIs for jobs and companies, and a frontend foundation ready for the dashboard.
 
 ## Architecture
 
@@ -14,12 +14,15 @@ The scraper layer follows a small adapter pattern:
 - `company.service.ts` and `job.service.ts` save normalized jobs with Prisma.
 - `matchScore.service.ts` scores job text against a weighted skill keyword profile.
 - Express routes expose saved jobs, companies, filters, and computed match scores.
+- The frontend keeps API access in `lib/api.ts`, shared response types in `lib/types.ts`, layout components in `components/layout`, and shadcn primitives in `components/ui`.
 
 PostgreSQL stores companies and jobs separately. Company names are unique, job URLs are unique, and repeated scraper runs update existing postings instead of creating duplicates.
 
 ## Setup
 
-Prerequisites: Node.js 22.12+ (Node 24 LTS recommended), npm, and Docker with Compose. Run these commands from the project root:
+Prerequisites: Node.js 22.12+ (Node 24 LTS recommended), npm, and Docker with Compose.
+
+Backend setup:
 
 ```sh
 cd swissscope-backend
@@ -30,6 +33,17 @@ npm run db:validate
 npm run db:deploy
 npm run db:generate
 npm run db:status
+```
+
+Frontend setup:
+
+```sh
+cd swissscope-frontend
+cp .env.example .env.local
+npm ci
+npm run typecheck
+npm run lint
+npm run build
 ```
 
 The database runs at `127.0.0.1:5433`, using database/user `swissscope` and the local-only password in `.env.example`. The Compose volume preserves data when the container stops. Stop it with `docker compose down` from the backend folder.
@@ -128,10 +142,18 @@ Available endpoints:
 - `GET /jobs?minScore=10`
 - `GET /companies`
 
+Start the frontend from `swissscope-frontend`:
+
+```sh
+npm run dev
+```
+
+The frontend listens on `http://localhost:3000` by default and reads the backend URL from `NEXT_PUBLIC_API_URL`.
+
 The SwissDevJobs scraper tries the public API and RSS feed first. Direct requests to `swissdevjobs.ch` currently redirect to JobCopilot/security pages from this environment, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint and logs normalized job rows from there.
 
 ## Verification
 
-Validated with Node 24.11.0 and Prisma 7.10.0. The schema validates, the TypeScript code typechecks, the keyword scoring service has focused tests, and the scraper save command has been verified against local PostgreSQL. A fresh save created 20 jobs and 9 companies; a second save updated the same 20 jobs without increasing row counts. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, and `/companies`.
+Validated with Node 24.11.0 and Prisma 7.10.0. The backend schema validates, the TypeScript code typechecks, the keyword scoring service has focused tests, and the scraper save command has been verified against local PostgreSQL. A fresh save created 20 jobs and 9 companies; a second save updated the same 20 jobs without increasing row counts. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, and `/companies`. The frontend passes typecheck, lint, and production build with Next.js 16 using the webpack build path.
 
 The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app.
