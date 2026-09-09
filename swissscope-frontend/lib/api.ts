@@ -1,4 +1,4 @@
-import type { CompaniesResponse, Job, JobsResponse } from "./types";
+import type { CompaniesResponse, Job, JobStatus, JobsResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
@@ -6,6 +6,7 @@ export type JobFilters = {
   city?: string;
   company?: string;
   minScore?: number;
+  status?: JobStatus;
 };
 
 export async function fetchJobs(filters: JobFilters = {}): Promise<JobsResponse> {
@@ -13,9 +14,20 @@ export async function fetchJobs(filters: JobFilters = {}): Promise<JobsResponse>
   if (filters.city) params.set("city", filters.city);
   if (filters.company) params.set("company", filters.company);
   if (filters.minScore !== undefined) params.set("minScore", String(filters.minScore));
+  if (filters.status) params.set("status", filters.status);
 
   const query = params.toString();
   return apiFetch<JobsResponse>(`/jobs${query ? `?${query}` : ""}`);
+}
+
+export async function updateJobStatus(id: string, status: JobStatus): Promise<Job> {
+  return apiFetch<Job>(`/jobs/${id}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
 }
 
 export async function fetchJob(id: string): Promise<Job> {
@@ -26,10 +38,12 @@ export async function fetchCompanies(): Promise<CompaniesResponse> {
   return apiFetch<CompaniesResponse>("/companies");
 }
 
-async function apiFetch<T>(path: string): Promise<T> {
+async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
+    ...init,
     headers: {
       Accept: "application/json",
+      ...init.headers,
     },
   });
 

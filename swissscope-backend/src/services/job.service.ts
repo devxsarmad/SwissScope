@@ -1,3 +1,4 @@
+import type { JobStatus } from "@prisma/client";
 import { prisma } from "../prisma/client.js";
 import type { NormalizedJob } from "../utils/normalizeData.js";
 import { findOrCreateCompany } from "./company.service.js";
@@ -19,6 +20,7 @@ export type JobFilters = {
   city?: string;
   company?: string;
   minScore?: number;
+  status?: JobStatus;
 };
 
 export async function saveJobs(jobs: NormalizedJob[]): Promise<SaveJobsResult> {
@@ -72,6 +74,7 @@ export async function listJobs(filters: JobFilters = {}) {
   const jobs = await prisma.job.findMany({
     where: {
       location: filters.city ? { contains: filters.city, mode: "insensitive" } : undefined,
+      status: filters.status,
       company: filters.company
         ? {
             name: {
@@ -94,6 +97,18 @@ export async function listJobs(filters: JobFilters = {}) {
     .filter(isRelevantSavedJob)
     .filter((job) => filters.minScore === undefined || job.matchScore.score >= filters.minScore)
     .sort((a, b) => b.matchScore.score - a.matchScore.score || b.scrapedAt.localeCompare(a.scrapedAt));
+}
+
+export async function updateJobStatus(id: string, status: JobStatus) {
+  const job = await prisma.job.update({
+    where: { id },
+    data: { status },
+    include: {
+      company: true,
+    },
+  });
+
+  return toJobResponse(job);
 }
 
 export async function getJobById(id: string) {
@@ -152,6 +167,7 @@ function toJobResponse(job: JobWithCompany) {
     location: job.location,
     url: job.url,
     workload: job.workload,
+    status: job.status,
     scrapedAt: job.scrapedAt.toISOString(),
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),

@@ -3,10 +3,19 @@ import { ExternalLink, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Job } from "@/lib/types";
+import type { Job, JobStatus } from "@/lib/types";
 import { MatchScoreBadge } from "./MatchScoreBadge";
+import { JobStatusSelect } from "./JobStatusSelect";
 
-export function JobCard({ job }: { job: Job }) {
+export function JobCard({
+  job,
+  updatingJobId,
+  onStatusChange,
+}: {
+  job: Job;
+  updatingJobId?: string | null;
+  onStatusChange: (jobId: string, status: JobStatus) => void;
+}) {
   return (
     <Card className="rounded-lg md:hidden">
       <CardHeader className="gap-2">
@@ -26,6 +35,14 @@ export function JobCard({ job }: { job: Job }) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="size-4" />
           {job.location ?? "Remote/unspecified"}
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm text-muted-foreground">Status</span>
+          <JobStatusSelect
+            disabled={updatingJobId === job.id}
+            value={job.status}
+            onChange={(status) => onStatusChange(job.id, status)}
+          />
         </div>
         <div className="flex flex-wrap gap-1">
           {job.techStack.slice(0, 4).map((tech) => (

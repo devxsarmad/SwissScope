@@ -5,7 +5,7 @@ import { Activity, BriefcaseBusiness, Building2, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useJobs } from "@/hooks/useJobs";
-import type { Job } from "@/lib/types";
+import type { Job, JobStatus } from "@/lib/types";
 import { JobCard } from "./JobCard";
 import { JobFilters, type JobFiltersValue } from "./JobFilters";
 import { JobTable } from "./JobTable";
@@ -18,12 +18,20 @@ export function JobsDashboard() {
     () => ({
       city: filters.city,
       minScore: filters.minScore,
+      status: filters.status,
     }),
-    [filters.city, filters.minScore],
+    [filters.city, filters.minScore, filters.status],
   );
-  const { jobs, isLoading, error } = useJobs(apiFilters);
+  const { jobs, isLoading, error, setJobStatus } = useJobs(apiFilters);
+  const [updatingJobId, setUpdatingJobId] = useState<string | null>(null);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
+
+  async function handleStatusChange(jobId: string, status: JobStatus) {
+    setUpdatingJobId(jobId);
+    await setJobStatus(jobId, status);
+    setUpdatingJobId(null);
+  }
 
   return (
     <section className="space-y-6">
@@ -41,7 +49,7 @@ export function JobsDashboard() {
         <StatCard icon={BriefcaseBusiness} label="Jobs" value={String(stats.totalJobs)} />
         <StatCard icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
         <StatCard icon={Target} label="Best Score" value={`${stats.bestScore}%`} />
-        <StatCard icon={Activity} label="Average Score" value={`${stats.averageScore}%`} />
+        <StatCard icon={Activity} label="Active" value={String(stats.activeJobs)} />
       </div>
 
       <JobFilters filters={filters} onChange={setFilters} onReset={() => setFilters(EMPTY_FILTERS)} />
@@ -66,10 +74,10 @@ export function JobsDashboard() {
 
       {!isLoading && !error && visibleJobs.length > 0 ? (
         <>
-          <JobTable jobs={visibleJobs} />
+          <JobTable jobs={visibleJobs} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
           <div className="grid gap-3">
             {visibleJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+              <JobCard key={job.id} job={job} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
             ))}
           </div>
         </>
@@ -117,10 +125,12 @@ function buildStats(jobs: Job[]) {
   const companyNames = new Set(jobs.map((job) => job.company.name));
   const totalScore = jobs.reduce((sum, job) => sum + job.matchScore.score, 0);
   const bestScore = jobs.reduce((best, job) => Math.max(best, job.matchScore.score), 0);
+  const activeJobs = jobs.filter((job) => !["REJECTED", "ARCHIVED"].includes(job.status)).length;
 
   return {
     totalJobs: jobs.length,
     totalCompanies: companyNames.size,
+    activeJobs,
     bestScore,
     averageScore: jobs.length === 0 ? 0 : Math.round(totalScore / jobs.length),
   };

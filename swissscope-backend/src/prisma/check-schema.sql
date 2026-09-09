@@ -17,6 +17,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM "Job"
     WHERE id = job_id AND "techStack" = ARRAY[]::text[]
+      AND status = 'NEW'::"JobStatus"
       AND workload IS NULL AND location IS NULL AND "scrapedAt" IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'Job defaults failed';

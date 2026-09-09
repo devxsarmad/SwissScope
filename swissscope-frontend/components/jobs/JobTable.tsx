@@ -10,10 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Job } from "@/lib/types";
+import type { Job, JobStatus } from "@/lib/types";
 import { MatchScoreBadge } from "./MatchScoreBadge";
+import { JobStatusSelect } from "./JobStatusSelect";
 
-export function JobTable({ jobs }: { jobs: Job[] }) {
+export function JobTable({
+  jobs,
+  updatingJobId,
+  onStatusChange,
+}: {
+  jobs: Job[];
+  updatingJobId?: string | null;
+  onStatusChange: (jobId: string, status: JobStatus) => void;
+}) {
   return (
     <div className="hidden overflow-hidden rounded-lg border bg-card md:block">
       <Table>
@@ -23,6 +32,7 @@ export function JobTable({ jobs }: { jobs: Job[] }) {
             <TableHead>Company</TableHead>
             <TableHead>Location</TableHead>
             <TableHead>Score</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Tech</TableHead>
             <TableHead className="w-24 text-right">Open</TableHead>
           </TableRow>
@@ -40,6 +50,13 @@ export function JobTable({ jobs }: { jobs: Job[] }) {
               <TableCell>{job.location ?? "Remote/unspecified"}</TableCell>
               <TableCell>
                 <MatchScoreBadge score={job.matchScore.score} />
+              </TableCell>
+              <TableCell>
+                <JobStatusSelect
+                  disabled={updatingJobId === job.id}
+                  value={job.status}
+                  onChange={(status) => onStatusChange(job.id, status)}
+                />
               </TableCell>
               <TableCell>
                 <div className="flex max-w-56 flex-wrap gap-1">

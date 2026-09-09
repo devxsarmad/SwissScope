@@ -1,3 +1,5 @@
+export type JobStatus = "NEW" | "SHORTLISTED" | "APPLIED" | "INTERVIEW" | "OFFER" | "REJECTED" | "ARCHIVED";
+
 export type MatchScore = {
   score: number;
   matched: Array<{
@@ -24,6 +26,7 @@ export type Job = {
   location: string | null;
   url: string;
   workload: string | null;
+  status: JobStatus;
   scrapedAt: string;
   createdAt: string;
   updatedAt: string;

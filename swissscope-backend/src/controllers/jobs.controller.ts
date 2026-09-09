@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
-import { getJobById, listJobs } from "../services/job.service.js";
+import { getJobById, listJobs, updateJobStatus } from "../services/job.service.js";
+import { parseJobStatus } from "../services/jobStatus.service.js";
 
 export async function getJobs(req: Request, res: Response) {
   const minScore = parseMinScore(req.query.minScore);
@@ -7,16 +8,41 @@ export async function getJobs(req: Request, res: Response) {
     return res.status(400).json({ error: minScore.message });
   }
 
+  const status = req.query.status === undefined ? undefined : parseJobStatus(req.query.status);
+  if (status instanceof Error) {
+    return res.status(400).json({ error: status.message });
+  }
+
   const jobs = await listJobs({
     city: stringQuery(req.query.city),
     company: stringQuery(req.query.company),
     minScore,
+    status,
   });
 
   return res.json({
     count: jobs.length,
     jobs,
   });
+}
+
+export async function patchJobStatus(req: Request, res: Response) {
+  const id = stringQuery(req.params.id);
+  if (!id) {
+    return res.status(400).json({ error: "Job id is required" });
+  }
+
+  const status = parseJobStatus(req.body?.status);
+  if (status instanceof Error) {
+    return res.status(400).json({ error: status.message });
+  }
+
+  try {
+    const job = await updateJobStatus(id, status);
+    return res.json(job);
+  } catch {
+    return res.status(404).json({ error: "Job not found" });
+  }
 }
 
 export async function getJob(req: Request, res: Response) {

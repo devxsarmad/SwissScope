@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchJobs, type JobFilters } from "@/lib/api";
-import type { Job } from "@/lib/types";
+import { fetchJobs, updateJobStatus, type JobFilters } from "@/lib/api";
+import type { Job, JobStatus } from "@/lib/types";
 
 type JobsState = {
   jobs: Job[];
@@ -11,7 +11,7 @@ type JobsState = {
 };
 
 export function useJobs(filters: JobFilters = {}) {
-  const { city, company, minScore } = filters;
+  const { city, company, minScore, status } = filters;
   const [state, setState] = useState<JobsState>({
     jobs: [],
     isLoading: true,
@@ -28,7 +28,7 @@ export function useJobs(filters: JobFilters = {}) {
       setState((current) => ({ ...current, isLoading: true, error: null }));
 
       try {
-        const response = await fetchJobs({ city, company, minScore });
+        const response = await fetchJobs({ city, company, minScore, status });
         if (isMounted) {
           setState({ jobs: response.jobs, isLoading: false, error: null });
         }
@@ -48,7 +48,30 @@ export function useJobs(filters: JobFilters = {}) {
     return () => {
       isMounted = false;
     };
-  }, [city, company, minScore]);
+  }, [city, company, minScore, status]);
 
-  return state;
+  async function setJobStatus(jobId: string, status: JobStatus) {
+    const previousJobs = state.jobs;
+    setState((current) => ({
+      ...current,
+      jobs: current.jobs.map((job) => (job.id === jobId ? { ...job, status } : job)),
+      error: null,
+    }));
+
+    try {
+      const updatedJob = await updateJobStatus(jobId, status);
+      setState((current) => ({
+        ...current,
+        jobs: current.jobs.map((job) => (job.id === jobId ? updatedJob : job)),
+      }));
+    } catch (caughtError) {
+      setState((current) => ({
+        ...current,
+        jobs: previousJobs,
+        error: caughtError instanceof Error ? caughtError.message : "Failed to update job status",
+      }));
+    }
+  }
+
+  return { ...state, setJobStatus };
 }
