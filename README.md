@@ -1,8 +1,23 @@
 # SwissScope
 
-A personal Swiss tech job targeting tool. Implementation currently covers **Chunk 1: Prisma schema and PostgreSQL setup** and **Chunk 2: SwissDevJobs fetch/log scraper**.
+SwissScope is a personal Swiss tech job intelligence tool. It collects software engineering roles, normalizes the data, stores postings in PostgreSQL, and prepares them for skill-based ranking so outreach can focus on the companies that best match a modern full-stack profile.
 
-## Local setup
+The backend is built with TypeScript, Express, Node.js, Prisma, PostgreSQL, Axios, and Cheerio. The current implementation includes a local database setup, a SwissDevJobs scraper, durable job/company saving, a standalone keyword scoring service, and read APIs for jobs and companies.
+
+## Architecture
+
+The scraper layer follows a small adapter pattern:
+
+- `BaseScraper` defines the shared `fetch`, `parse`, `normalize`, and `scrape` flow.
+- Site scrapers live in `src/scrapers/sites` and only handle site-specific parsing.
+- `normalizeData.ts` converts raw source data into one common job shape.
+- `company.service.ts` and `job.service.ts` save normalized jobs with Prisma.
+- `matchScore.service.ts` scores job text against a weighted skill keyword profile.
+- Express routes expose saved jobs, companies, filters, and computed match scores.
+
+PostgreSQL stores companies and jobs separately. Company names are unique, job URLs are unique, and repeated scraper runs update existing postings instead of creating duplicates.
+
+## Setup
 
 Prerequisites: Node.js 22.12+ (Node 24 LTS recommended), npm, and Docker with Compose. Run these commands from the project root:
 
@@ -38,20 +53,20 @@ DATABASE_URL="postgresql://swissscope:replace_with_a_local_password@127.0.0.1:54
 
 Then run the npm commands above, skipping `docker compose`. `CREATEDB` allows Prisma's development migration command to create its shadow database. A deployment-only role does not need that privilege.
 
-## Schema
+## Database
 
 The schema lives at `swissscope-backend/src/prisma/schema.prisma`.
 
-- `Company`: unique name, ID, timestamps, and related jobs. Name uniqueness is case-sensitive; ingestion will need consistent name normalization. This is a simple company identity rule for the personal tool.
+- `Company`: unique name, ID, timestamps, and related jobs. Name uniqueness is case-sensitive, so ingestion trims names before saving.
 - `Job`: company relation, title, description, technology string array, optional location and workload, unique posting URL, scrape timestamp, and record timestamps.
 
-One company can have many jobs. The company relation is required and deleting a company that still has jobs is blocked. Posting URLs prevent duplicate rows for the same URL; separate boards can still have separate URLs for the same vacancy. Workload preserves source text such as `80–100%`. Missing technology data is an empty array. `scrapedAt` defaults to insertion time; the ingestion chunk will explicitly refresh it on subsequent scrapes.
+One company can have many jobs. The company relation is required and deleting a company that still has jobs is blocked. Posting URLs prevent duplicate rows for the same URL; separate boards can still have separate URLs for the same vacancy. Workload preserves source text such as `80-100%`. Missing technology data is an empty array, and `scrapedAt` refreshes when an existing posting is seen again.
 
-Indexes support company, location, and scrape-date queries. Match scores and status tracking will be added in their designated chunks.
+Indexes support company, location, and scrape-date queries. Status tracking will be added later.
 
-## Manual check
+## Commands
 
-`npm run db:status` should report that the database schema is up to date. `npm run db:studio` opens the empty Company and Job tables for inspection. No scraper, API, or frontend is included yet.
+`npm run db:status` should report that the database schema is up to date. `npm run db:studio` opens the Company and Job tables for inspection. No API or frontend is included yet.
 
 To check defaults, unique keys, and company relationships against the Docker database, run from the backend folder:
 
@@ -61,11 +76,7 @@ docker compose exec -T postgres psql -U swissscope -d swissscope -v ON_ERROR_STO
 
 The check creates temporary fixture rows inside a transaction and rolls them back. With an existing PostgreSQL installation, run the same file using `psql -h 127.0.0.1 -U swissscope -d swissscope -v ON_ERROR_STOP=1 -f src/prisma/check-schema.sql` (adjust host and port as needed).
 
-## Scraper Check
-
-Chunk 2 adds a TypeScript SwissDevJobs scraper that fetches postings and logs normalized rows only. It does not save anything to PostgreSQL yet.
-
-Run it from the backend folder:
+Run the SwissDevJobs scraper without saving:
 
 ```sh
 npm run scrape:swissdevjobs
@@ -73,11 +84,54 @@ npm run scrape:swissdevjobs
 
 The scraper tries the SwissDevJobs public API and RSS feed first. During verification, direct requests to `swissdevjobs.ch` redirected to JobCopilot/security pages, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint and logs normalized job rows from there.
 
-The next chunk, after confirmation, connects the scraper output to Prisma and saves jobs to PostgreSQL.
+Run the scraper and save results to PostgreSQL:
 
-## Verification notes
+```sh
+npm run scrape:swissdevjobs:save
+```
 
-Validated with Node 24.11.0 and Prisma 7.10.0: schema formatting/validation, client generation, migration against an isolated local PostgreSQL database, and the transactional schema checks. Docker Compose configuration was validated; the Docker container itself was not started during initial schema verification. Chunk 2 was typechecked with TypeScript and verified with `npm run scrape:swissdevjobs`, which logged 20 jobs.
+To inspect saved rows:
 
-The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app; this chunk only contains local database tooling.
-# SwissScope
+```sh
+docker compose exec postgres psql -U swissscope -d swissscope
+```
+
+Then inside `psql`:
+
+```sql
+SELECT COUNT(*) FROM "Company";
+SELECT COUNT(*) FROM "Job";
+```
+
+Run type checks and service tests:
+
+```sh
+npm run typecheck
+npm test
+```
+
+Start the API:
+
+```sh
+npm run dev
+```
+
+The API listens on `http://localhost:4000` by default. Set `PORT` to use a different port.
+
+Available endpoints:
+
+- `GET /health`
+- `GET /jobs`
+- `GET /jobs/:id`
+- `GET /jobs?city=Zurich`
+- `GET /jobs?company=Rockstar`
+- `GET /jobs?minScore=10`
+- `GET /companies`
+
+The SwissDevJobs scraper tries the public API and RSS feed first. Direct requests to `swissdevjobs.ch` currently redirect to JobCopilot/security pages from this environment, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint and logs normalized job rows from there.
+
+## Verification
+
+Validated with Node 24.11.0 and Prisma 7.10.0. The schema validates, the TypeScript code typechecks, the keyword scoring service has focused tests, and the scraper save command has been verified against local PostgreSQL. A fresh save created 20 jobs and 9 companies; a second save updated the same 20 jobs without increasing row counts. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, and `/companies`.
+
+The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app.
