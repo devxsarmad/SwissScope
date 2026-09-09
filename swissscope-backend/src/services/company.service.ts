@@ -11,6 +11,21 @@ export async function findOrCreateCompany(name: string) {
   });
 }
 
+export async function listCompanies() {
+  return prisma.company.findMany({
+    include: {
+      _count: {
+        select: {
+          jobs: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+}
+
 function normalizeCompanyName(name: string): string {
   return cleanText(name);
 }
