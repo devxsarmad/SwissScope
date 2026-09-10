@@ -27,6 +27,9 @@ export type Job = {
   url: string;
   workload: string | null;
   status: JobStatus;
+  postedAt: string | null;
+  postedAgeText: string | null;
+  applicantCount: number | null;
   scrapedAt: string;
   createdAt: string;
   updatedAt: string;

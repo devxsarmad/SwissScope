@@ -3,6 +3,7 @@ import { ExternalLink, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Job, JobStatus } from "@/lib/types";
+import { JobFreshness } from "./JobFreshness";
 import { JobStatusSelect } from "./JobStatusSelect";
 import { MatchScoreBadge } from "./MatchScoreBadge";
 import { TechChip } from "./TechChip";
@@ -36,6 +37,7 @@ export function JobCard({
           <MapPin className="size-4 text-primary" />
           <span className="min-w-0 truncate">{job.location ?? "Remote/unspecified"}</span>
         </div>
+        <JobFreshness job={job} />
         <div className="flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-3">
           <span className="text-sm font-medium text-muted-foreground">Status</span>
           <JobStatusSelect

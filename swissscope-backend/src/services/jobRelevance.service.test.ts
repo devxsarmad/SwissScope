@@ -98,6 +98,8 @@ function job(overrides: Partial<NormalizedJob>): NormalizedJob {
     description: "React TypeScript Node.js",
     techStack: [],
     workload: "Full-Time",
+    postedAt: null,
+    applicantCount: null,
     scrapedAt: new Date("2026-09-09T00:00:00.000Z").toISOString(),
     ...overrides,
   };

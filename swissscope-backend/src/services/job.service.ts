@@ -1,4 +1,4 @@
-import type { JobStatus } from "@prisma/client";
+import type { JobStatus, Prisma } from "@prisma/client";
 import { prisma } from "../prisma/client.js";
 import type { NormalizedJob } from "../utils/normalizeData.js";
 import { findOrCreateCompany } from "./company.service.js";
@@ -46,6 +46,8 @@ export async function saveJobs(jobs: NormalizedJob[]): Promise<SaveJobsResult> {
         techStack: job.techStack,
         location: job.location,
         workload: job.workload,
+        postedAt: job.postedAt ? new Date(job.postedAt) : undefined,
+        applicantCount: job.applicantCount ?? undefined,
         scrapedAt: new Date(job.scrapedAt),
       },
       create: {
@@ -56,6 +58,8 @@ export async function saveJobs(jobs: NormalizedJob[]): Promise<SaveJobsResult> {
         location: job.location,
         url: job.url,
         workload: job.workload,
+        postedAt: job.postedAt ? new Date(job.postedAt) : undefined,
+        applicantCount: job.applicantCount ?? undefined,
         scrapedAt: new Date(job.scrapedAt),
       },
     });
@@ -154,7 +158,7 @@ export async function pruneIrrelevantJobs(): Promise<PruneJobsResult> {
   };
 }
 
-type JobWithCompany = Awaited<ReturnType<typeof prisma.job.findMany<{ include: { company: true } }>>>[number];
+type JobWithCompany = Prisma.JobGetPayload<{ include: { company: true } }>;
 
 function toJobResponse(job: JobWithCompany) {
   const matchScore = calculateMatchScore([job.title, job.description, job.techStack.join(" ")]);
@@ -168,6 +172,9 @@ function toJobResponse(job: JobWithCompany) {
     url: job.url,
     workload: job.workload,
     status: job.status,
+    postedAt: job.postedAt?.toISOString() ?? null,
+    postedAgeText: formatPostedAge(job.postedAt),
+    applicantCount: job.applicantCount,
     scrapedAt: job.scrapedAt.toISOString(),
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),
@@ -191,6 +198,31 @@ function isRelevantSavedJob(job: JobResponse): boolean {
     description: job.description,
     techStack: job.techStack,
     workload: job.workload,
+    postedAt: job.postedAt,
+    applicantCount: job.applicantCount,
     scrapedAt: job.scrapedAt,
   });
+}
+
+function formatPostedAge(postedAt: Date | null): string | null {
+  if (!postedAt) return null;
+
+  const elapsedMs = Date.now() - postedAt.getTime();
+  if (!Number.isFinite(elapsedMs)) return null;
+  if (elapsedMs < 0) return "Today";
+
+  const minutes = Math.floor(elapsedMs / 60000);
+  if (minutes < 60) return minutes <= 1 ? "Just posted" : `${minutes} minutes ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 30) return days === 1 ? "1 day ago" : `${days} days ago`;
+
+  const months = Math.floor(days / 30);
+  if (months < 12) return months === 1 ? "1 month ago" : `${months} months ago`;
+
+  const years = Math.floor(days / 365);
+  return years <= 1 ? "1 year ago" : `${years} years ago`;
 }

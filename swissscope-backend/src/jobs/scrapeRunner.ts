@@ -23,6 +23,12 @@ try {
       if (job.workload) {
         console.log(`  Workload: ${job.workload}`);
       }
+      if (job.postedAt) {
+        console.log(`  Posted: ${job.postedAt}`);
+      }
+      if (job.applicantCount !== null) {
+        console.log(`  Applicants: ${job.applicantCount}`);
+      }
     }
 
     if (shouldSave && jobs.length > 0) {

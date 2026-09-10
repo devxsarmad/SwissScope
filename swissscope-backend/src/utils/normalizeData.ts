@@ -6,6 +6,8 @@ export type RawJob = {
   description?: string | null;
   techStack?: string[];
   workload?: string | null;
+  postedAt?: string | null;
+  applicantCount?: number | null;
 };
 
 export type NormalizedJob = {
@@ -17,6 +19,8 @@ export type NormalizedJob = {
   description: string;
   techStack: string[];
   workload: string | null;
+  postedAt: string | null;
+  applicantCount: number | null;
   scrapedAt: string;
 };
 
@@ -82,6 +86,8 @@ export function normalizeJob(rawJob: RawJob, options: { source: string; baseUrl:
   const company = cleanText(rawJob.company);
   const description = cleanText(rawJob.description);
   const rawTechStack = Array.isArray(rawJob.techStack) ? rawJob.techStack : [];
+  const postedAt = normalizeDate(rawJob.postedAt);
+  const applicantCount = normalizeApplicantCount(rawJob.applicantCount);
 
   return {
     source: options.source,
@@ -92,8 +98,25 @@ export function normalizeJob(rawJob: RawJob, options: { source: string; baseUrl:
     description,
     techStack: normalizeTechStack(rawTechStack, `${title} ${description}`),
     workload: cleanText(rawJob.workload) || null,
+    postedAt,
+    applicantCount,
     scrapedAt: new Date().toISOString(),
   };
+}
+
+function normalizeDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toISOString();
+}
+
+function normalizeApplicantCount(value: number | null | undefined): number | null {
+  if (value === null || value === undefined) return null;
+  if (!Number.isInteger(value) || value < 0) return null;
+  return value;
 }
 
 function escapeRegExp(value: string): string {

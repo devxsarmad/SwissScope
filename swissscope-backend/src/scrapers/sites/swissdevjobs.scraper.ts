@@ -14,6 +14,10 @@ type ApiJobRow = {
   cityCategory?: string;
   jobUrl?: string;
   jobType?: string;
+  datePosted?: string;
+  postedAt?: string;
+  createdAt?: string;
+  publishedAt?: string;
   technologies?: string[];
   tech?: string[];
   techCategory?: string;
@@ -153,6 +157,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
       description: [row.name, row.company, location, techStack.join(" ")].filter(Boolean).join(" "),
       techStack,
       workload: row.jobType,
+      postedAt: row.datePosted || row.postedAt || row.publishedAt || row.createdAt,
     };
   }
 
@@ -166,6 +171,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
         const titleText = cleanText($item.find("title").first().text());
         const [title, company] = splitTitleAndCompany(titleText);
         const description = cleanText($item.find("description").first().text());
+        const pubDate = cleanText($item.find("pubDate").first().text());
 
         return {
           title,
@@ -175,6 +181,7 @@ export class SwissDevJobsScraper extends BaseScraper<ScraperPayload, RawJob, Nor
           description,
           techStack: extractTechTags(description),
           workload: extractWorkload(`${title} ${description}`),
+          postedAt: pubDate,
         };
       })
       .filter(hasRequiredFields);

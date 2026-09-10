@@ -17,6 +17,7 @@ describe("parseJobPostingsFromHtml", () => {
               "title": "Full-Stack AI Engineer",
               "description": "React, TypeScript, Node.js and OpenAI APIs",
               "employmentType": "Permanent position",
+              "datePosted": "2026-09-10T08:00:00+02:00",
               "hiringOrganization": { "@type": "Organization", "name": "SwissScope Labs" },
               "jobLocation": { "@type": "Place", "address": { "addressLocality": "Zurich", "addressCountry": "CH" } },
               "url": "https://www.jobs.ch/en/vacancies/detail/example/"
@@ -30,6 +31,7 @@ describe("parseJobPostingsFromHtml", () => {
     assert.equal(job?.title, "Full-Stack AI Engineer");
     assert.equal(job?.hiringOrganization?.name, "SwissScope Labs");
     assert.equal(job?.url, "https://www.jobs.ch/en/vacancies/detail/example/");
+    assert.equal(job?.datePosted, "2026-09-10T08:00:00+02:00");
   });
 
   it("extracts JobPosting rows from detail page JSON-LD", () => {

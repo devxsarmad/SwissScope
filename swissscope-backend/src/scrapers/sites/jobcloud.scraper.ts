@@ -19,6 +19,7 @@ type JobPostingJson = {
   title?: string;
   description?: string;
   employmentType?: string | string[];
+  datePosted?: string;
   hiringOrganization?: {
     name?: string;
   };
@@ -109,7 +110,7 @@ export class JobCloudScraper extends BaseScraper<JobCloudPayload, RawJob, Normal
       const [posting] = parseJobPostingsFromHtml(response.data);
       if (!posting) return null;
 
-      const detailRow = toRawJob(posting, this.config.baseUrl);
+      const detailRow = toRawJob(posting, this.config.baseUrl, response.data);
 
       return {
         ...row,
@@ -172,7 +173,7 @@ function collectJobPostings(value: unknown, postings: JobPostingJson[]): void {
   collectJobPostings(value["@graph"], postings);
 }
 
-function toRawJob(posting: JobPostingJson, baseUrl: string): RawJob {
+function toRawJob(posting: JobPostingJson, baseUrl: string, html = ""): RawJob {
   const description = htmlToText(posting.description ?? "");
 
   return {
@@ -183,7 +184,20 @@ function toRawJob(posting: JobPostingJson, baseUrl: string): RawJob {
     description,
     techStack: [],
     workload: formatEmploymentType(posting.employmentType),
+    postedAt: posting.datePosted,
+    applicantCount: extractApplicantCount(html),
   };
+}
+
+function extractApplicantCount(html: string): number | null {
+  if (!html) return null;
+
+  const text = htmlToText(html);
+  const match = text.match(/\b(\d{1,5})\s+(?:applicants?|applications?)\b/i);
+  if (!match?.[1]) return null;
+
+  const count = Number(match[1]);
+  return Number.isInteger(count) && count >= 0 ? count : null;
 }
 
 function htmlToText(html: string): string {

@@ -26,24 +26,27 @@ enum JobStatus {
 }
 
 model Job {
-  id          String    @id @default(cuid())
-  companyId   String
-  company     Company   @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  title       String
-  description String    @db.Text
-  techStack   String[]  @default([])
-  location    String?
+  id             String    @id @default(cuid())
+  companyId      String
+  company        Company   @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  title          String
+  description    String    @db.Text
+  techStack      String[]  @default([])
+  location       String?
   // Canonical posting URL is the deduplication key for repeated scrapes.
-  url         String    @unique
+  url            String    @unique
   // Preserve ranges such as "80–100%"; null means the site did not specify it.
-  workload    String?
-  status      JobStatus @default(NEW)
-  scrapedAt   DateTime  @default(now()) @db.Timestamptz(3)
-  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
+  workload       String?
+  status         JobStatus @default(NEW)
+  postedAt       DateTime? @db.Timestamptz(3)
+  applicantCount Int?
+  scrapedAt      DateTime  @default(now()) @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(3)
 
   @@index([companyId])
   @@index([location])
   @@index([scrapedAt])
   @@index([status])
+  @@index([postedAt])
 }
