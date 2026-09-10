@@ -10,6 +10,17 @@ const STATUS_OPTIONS: Array<{ value: JobStatus; label: string }> = [
   { value: "ARCHIVED", label: "Archived" },
 ];
 
+const STATUS_CLASSES: Record<JobStatus, string> = {
+  NEW: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300",
+  SHORTLISTED:
+    "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/60 dark:bg-indigo-950/40 dark:text-indigo-300",
+  APPLIED: "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-900/60 dark:bg-teal-950/40 dark:text-teal-300",
+  INTERVIEW: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300",
+  OFFER: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300",
+  REJECTED: "border-red-200 bg-red-50 text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300",
+  ARCHIVED: "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300",
+};
+
 export function JobStatusSelect({
   value,
   disabled,
@@ -22,7 +33,7 @@ export function JobStatusSelect({
   return (
     <select
       aria-label="Job status"
-      className="h-8 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground shadow-xs outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-60"
+      className={`h-9 rounded-full border px-3 text-xs font-semibold shadow-xs outline-none transition-colors focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 ${STATUS_CLASSES[value]}`}
       disabled={disabled}
       value={value}
       onChange={(event) => onChange(event.target.value as JobStatus)}
@@ -36,4 +47,4 @@ export function JobStatusSelect({
   );
 }
 
-export { STATUS_OPTIONS };
+export { STATUS_CLASSES, STATUS_OPTIONS };

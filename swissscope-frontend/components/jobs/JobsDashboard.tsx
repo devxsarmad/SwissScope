@@ -34,18 +34,18 @@ export function JobsDashboard() {
   }
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <Badge variant="outline" className="w-fit rounded-md">
+    <section className="min-w-0 space-y-6">
+      <div className="flex min-w-0 flex-col gap-3">
+        <Badge variant="outline" className="w-fit rounded-full border-primary/20 bg-primary/10 px-3 py-1 font-semibold text-primary">
           Live data from PostgreSQL
         </Badge>
-        <h1 className="text-2xl font-semibold tracking-normal md:text-3xl">Job Match Dashboard</h1>
-        <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Job Match Dashboard</h1>
+        <p className="max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
           Saved Swiss engineering roles ranked by fit for your full-stack and AI profile.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={BriefcaseBusiness} label="Jobs" value={String(stats.totalJobs)} />
         <StatCard icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
         <StatCard icon={Target} label="Best Score" value={`${stats.bestScore}%`} />
@@ -96,13 +96,15 @@ function StatCard({
   value: string;
 }) {
   return (
-    <Card className="rounded-lg">
-      <CardHeader className="flex flex-row items-center justify-between gap-3">
-        <CardTitle className="text-sm text-muted-foreground">{label}</CardTitle>
-        <Icon className="size-4 text-muted-foreground" />
+    <Card className="rounded-2xl bg-gradient-to-br from-card to-muted/35">
+      <CardHeader className="flex flex-row items-center justify-between gap-3 pb-0">
+        <CardTitle className="text-sm font-semibold text-muted-foreground">{label}</CardTitle>
+        <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Icon className="size-4" />
+        </div>
       </CardHeader>
       <CardContent>
-        <p className="text-xl font-semibold">{value}</p>
+        <p className="text-2xl font-bold tracking-tight">{value}</p>
       </CardContent>
     </Card>
   );
