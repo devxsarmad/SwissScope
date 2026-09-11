@@ -1,6 +1,18 @@
-import type { CompaniesResponse, Job, JobStatus, JobsResponse } from "./types";
+import type { CompaniesResponse, Job, JobStatus, JobsResponse, OutreachStatus } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+
+export type JobOutreachUpdate = {
+  outreachStatus?: OutreachStatus;
+  notes?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactLinkedIn?: string | null;
+  appliedAt?: string | null;
+  followUpAt?: string | null;
+  lastContactedAt?: string | null;
+  interviewNotes?: string | null;
+};
 
 export type JobFilters = {
   city?: string;
@@ -27,6 +39,16 @@ export async function updateJobStatus(id: string, status: JobStatus): Promise<Jo
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ status }),
+  });
+}
+
+export async function updateJobOutreach(id: string, data: JobOutreachUpdate): Promise<Job> {
+  return apiFetch<Job>(`/jobs/${id}/outreach`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
 }
 

@@ -20,6 +20,10 @@ BEGIN
       AND status = 'NEW'::"JobStatus"
       AND "postedAt" IS NULL
       AND "applicantCount" IS NULL
+      AND "outreachStatus" = 'NOT_STARTED'::"OutreachStatus"
+      AND notes IS NULL AND "contactName" IS NULL AND "contactEmail" IS NULL
+      AND "contactLinkedIn" IS NULL AND "appliedAt" IS NULL AND "followUpAt" IS NULL
+      AND "lastContactedAt" IS NULL AND "interviewNotes" IS NULL
       AND workload IS NULL AND location IS NULL AND "scrapedAt" IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'Job defaults failed';

@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
-import { getJobById, listJobs, updateJobStatus } from "../services/job.service.js";
+import { getJobById, listJobs, updateJobOutreach, updateJobStatus } from "../services/job.service.js";
 import { parseJobStatus } from "../services/jobStatus.service.js";
+import { parseJobOutreachUpdate } from "../services/jobOutreach.service.js";
 
 export async function getJobs(req: Request, res: Response) {
   const minScore = parseMinScore(req.query.minScore);
@@ -39,6 +40,25 @@ export async function patchJobStatus(req: Request, res: Response) {
 
   try {
     const job = await updateJobStatus(id, status);
+    return res.json(job);
+  } catch {
+    return res.status(404).json({ error: "Job not found" });
+  }
+}
+
+export async function patchJobOutreach(req: Request, res: Response) {
+  const id = stringQuery(req.params.id);
+  if (!id) {
+    return res.status(400).json({ error: "Job id is required" });
+  }
+
+  const update = parseJobOutreachUpdate(req.body);
+  if (update instanceof Error) {
+    return res.status(400).json({ error: update.message });
+  }
+
+  try {
+    const job = await updateJobOutreach(id, update);
     return res.json(job);
   } catch {
     return res.status(404).json({ error: "Job not found" });

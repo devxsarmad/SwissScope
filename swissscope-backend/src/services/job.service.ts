@@ -1,4 +1,5 @@
 import type { JobStatus, Prisma } from "@prisma/client";
+import type { JobOutreachUpdate } from "./jobOutreach.service.js";
 import { prisma } from "../prisma/client.js";
 import type { NormalizedJob } from "../utils/normalizeData.js";
 import { findOrCreateCompany } from "./company.service.js";
@@ -115,6 +116,18 @@ export async function updateJobStatus(id: string, status: JobStatus) {
   return toJobResponse(job);
 }
 
+export async function updateJobOutreach(id: string, data: JobOutreachUpdate) {
+  const job = await prisma.job.update({
+    where: { id },
+    data,
+    include: {
+      company: true,
+    },
+  });
+
+  return toJobResponse(job);
+}
+
 export async function getJobById(id: string) {
   const job = await prisma.job.findUnique({
     where: { id },
@@ -175,6 +188,15 @@ function toJobResponse(job: JobWithCompany) {
     postedAt: job.postedAt?.toISOString() ?? null,
     postedAgeText: formatPostedAge(job.postedAt),
     applicantCount: job.applicantCount,
+    outreachStatus: job.outreachStatus,
+    notes: job.notes,
+    contactName: job.contactName,
+    contactEmail: job.contactEmail,
+    contactLinkedIn: job.contactLinkedIn,
+    appliedAt: job.appliedAt?.toISOString() ?? null,
+    followUpAt: job.followUpAt?.toISOString() ?? null,
+    lastContactedAt: job.lastContactedAt?.toISOString() ?? null,
+    interviewNotes: job.interviewNotes,
     scrapedAt: job.scrapedAt.toISOString(),
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),

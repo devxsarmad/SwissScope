@@ -1,5 +1,7 @@
 export type JobStatus = "NEW" | "SHORTLISTED" | "APPLIED" | "INTERVIEW" | "OFFER" | "REJECTED" | "ARCHIVED";
 
+export type OutreachStatus = "NOT_STARTED" | "CONTACTED" | "FOLLOWED_UP" | "RESPONDED" | "INTERVIEWING" | "CLOSED";
+
 export type MatchScore = {
   score: number;
   matched: Array<{
@@ -30,6 +32,15 @@ export type Job = {
   postedAt: string | null;
   postedAgeText: string | null;
   applicantCount: number | null;
+  outreachStatus: OutreachStatus;
+  notes: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
+  contactLinkedIn: string | null;
+  appliedAt: string | null;
+  followUpAt: string | null;
+  lastContactedAt: string | null;
+  interviewNotes: string | null;
   scrapedAt: string;
   createdAt: string;
   updatedAt: string;
