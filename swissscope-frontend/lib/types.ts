@@ -57,3 +57,31 @@ export type CompaniesResponse = {
   count: number;
   companies: Company[];
 };
+
+export type ScrapeRunStatus = "RUNNING" | "SUCCESS" | "PARTIAL_FAILURE" | "FAILED";
+
+export type ScrapeSourceResult = {
+  source: string;
+  status: "success" | "failed";
+  fetched: number;
+  created: number;
+  updated: number;
+  error: string | null;
+};
+
+export type ScrapeRun = {
+  id: string;
+  status: ScrapeRunStatus;
+  startedAt: string;
+  finishedAt: string | null;
+  sourceResults: ScrapeSourceResult[];
+  totalFetched: number;
+  totalCreated: number;
+  totalUpdated: number;
+  archivedJobs: number;
+  error: string | null;
+};
+
+export type LatestScrapeRunResponse = {
+  scrapeRun: ScrapeRun | null;
+};

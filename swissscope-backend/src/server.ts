@@ -4,6 +4,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import { companiesRouter } from "./routes/companies.routes.js";
 import { healthRouter } from "./routes/health.routes.js";
 import { jobsRouter } from "./routes/jobs.routes.js";
+import { scrapeRunsRouter } from "./routes/scrapeRuns.routes.js";
 import { prisma } from "./prisma/client.js";
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/health", healthRouter);
 app.use("/jobs", jobsRouter);
+app.use("/scrape-runs", scrapeRunsRouter);
 app.use("/companies", companiesRouter);
 
 app.use((_req, res) => {

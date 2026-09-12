@@ -70,3 +70,28 @@ model Job {
   @@index([outreachStatus])
   @@index([followUpAt])
 }
+
+enum ScrapeRunStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL_FAILURE
+  FAILED
+}
+
+model ScrapeRun {
+  id            String          @id @default(cuid())
+  status        ScrapeRunStatus @default(RUNNING)
+  startedAt     DateTime        @default(now()) @db.Timestamptz(3)
+  finishedAt    DateTime?       @db.Timestamptz(3)
+  sourceResults Json            @default("[]")
+  totalFetched  Int             @default(0)
+  totalCreated  Int             @default(0)
+  totalUpdated  Int             @default(0)
+  archivedJobs  Int             @default(0)
+  error         String?         @db.Text
+  createdAt     DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(3)
+
+  @@index([startedAt])
+  @@index([status])
+}

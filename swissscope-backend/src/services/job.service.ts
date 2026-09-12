@@ -17,6 +17,11 @@ export type PruneJobsResult = {
   deleted: number;
 };
 
+export type ArchiveStaleJobsResult = {
+  cutoff: string;
+  archived: number;
+};
+
 export type JobFilters = {
   city?: string;
   company?: string;
@@ -137,6 +142,28 @@ export async function getJobById(id: string) {
   });
 
   return job ? toJobResponse(job) : null;
+}
+
+export async function archiveStaleJobs(staleAfterDays: number): Promise<ArchiveStaleJobsResult> {
+  const cutoff = new Date(Date.now() - staleAfterDays * 24 * 60 * 60 * 1000);
+  const result = await prisma.job.updateMany({
+    where: {
+      scrapedAt: {
+        lt: cutoff,
+      },
+      status: {
+        in: ["NEW", "SHORTLISTED", "REJECTED"],
+      },
+    },
+    data: {
+      status: "ARCHIVED",
+    },
+  });
+
+  return {
+    cutoff: cutoff.toISOString(),
+    archived: result.count,
+  };
 }
 
 export async function pruneIrrelevantJobs(): Promise<PruneJobsResult> {

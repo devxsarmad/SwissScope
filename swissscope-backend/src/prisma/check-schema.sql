@@ -7,6 +7,7 @@ DECLARE
   company_id text := 'schema-check-company-' || txid_current();
   job_id text := 'schema-check-job-' || txid_current();
   posting_url text := 'https://example.invalid/jobs/' || txid_current();
+  scrape_run_id text := 'schema-check-scrape-run-' || txid_current();
 BEGIN
   INSERT INTO "Company" (id, name, "updatedAt")
   VALUES (company_id, company_id, now());
@@ -27,6 +28,22 @@ BEGIN
       AND workload IS NULL AND location IS NULL AND "scrapedAt" IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'Job defaults failed';
+  END IF;
+
+  INSERT INTO "ScrapeRun" (id, "updatedAt")
+  VALUES (scrape_run_id, now());
+
+  IF NOT EXISTS (
+    SELECT 1 FROM "ScrapeRun"
+    WHERE id = scrape_run_id
+      AND status = 'RUNNING'::"ScrapeRunStatus"
+      AND "sourceResults" = '[]'::jsonb
+      AND "totalFetched" = 0
+      AND "totalCreated" = 0
+      AND "totalUpdated" = 0
+      AND "archivedJobs" = 0
+  ) THEN
+    RAISE EXCEPTION 'ScrapeRun defaults failed';
   END IF;
 
   BEGIN
@@ -55,7 +72,7 @@ BEGIN
   EXCEPTION WHEN foreign_key_violation THEN NULL;
   END;
 
-  RAISE NOTICE 'Schema checks passed: defaults, unique keys, relation, restricted deletion';
+  RAISE NOTICE 'Schema checks passed: defaults, scrape run defaults, unique keys, relation, restricted deletion';
 END $$;
 
 ROLLBACK;

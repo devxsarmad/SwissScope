@@ -5,10 +5,12 @@ import { Activity, BriefcaseBusiness, Building2, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useJobs } from "@/hooks/useJobs";
+import { useLatestScrapeRun } from "@/hooks/useLatestScrapeRun";
 import type { Job, JobStatus } from "@/lib/types";
 import { JobCard } from "./JobCard";
 import { JobFilters, type JobFiltersValue } from "./JobFilters";
 import { JobTable } from "./JobTable";
+import { ScrapeRunSummary } from "./ScrapeRunSummary";
 
 const EMPTY_FILTERS: JobFiltersValue = {};
 
@@ -24,6 +26,7 @@ export function JobsDashboard() {
   );
   const { jobs, isLoading, error, setJobStatus } = useJobs(apiFilters);
   const [updatingJobId, setUpdatingJobId] = useState<string | null>(null);
+  const { scrapeRun, isLoading: isScrapeRunLoading } = useLatestScrapeRun();
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
 
@@ -43,6 +46,7 @@ export function JobsDashboard() {
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
           Saved Swiss engineering roles ranked by fit for your full-stack and AI profile.
         </p>
+        <ScrapeRunSummary scrapeRun={scrapeRun} isLoading={isScrapeRunLoading} />
       </div>
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4">
