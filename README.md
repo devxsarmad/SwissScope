@@ -122,13 +122,21 @@ npm run scrape:jobup:save
 npm run scrape:all:save
 ```
 
-Run the production-grade scheduled scraper entrypoint:
+Run one production-grade scrape cycle:
 
 ```sh
 npm run scrape:scheduled
 ```
 
-This command runs every registered scraper, saves relevant jobs, records per-source scrape results, archives jobs not seen for `STALE_JOB_DAYS` days, and returns a nonzero exit code only when the whole scheduled run fails. `STALE_JOB_DAYS` defaults to 30.
+This command runs every registered scraper, saves relevant jobs, records per-source scrape results, archives stale inactive jobs based on `STALE_JOB_DAYS`, and returns a nonzero exit code only when the whole scheduled run fails. `STALE_JOB_DAYS` defaults to 30.
+
+Run the automatic scheduler process:
+
+```sh
+npm run scrape:cron
+```
+
+The scheduler runs the same scrape cycle every three hours by default, controlled by `SCRAPE_CRON_INTERVAL_HOURS=3`. It also runs once on startup unless `SCRAPE_CRON_RUN_ON_START=false` is set. If a previous scrape is still running, the next interval is skipped so two scrapes never write to PostgreSQL at the same time.
 
 The SwissDevJobs scraper tries the public API and RSS feed first. Direct requests to `swissdevjobs.ch` currently redirect to JobCopilot/security pages from this environment, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint. The jobs.ch and jobup.ch scrapers read public JSON-LD from search and detail pages, including posting dates when available, then apply the same target-stack relevance filter before logging or saving rows. A command can return zero jobs when the current public results do not match the strict SwissScope profile.
 

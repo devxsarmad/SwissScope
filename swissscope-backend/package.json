@@ -27,7 +27,8 @@
     "scrape:jobsch:save": "tsx src/jobs/scrapeRunner.ts jobsch --save",
     "scrape:jobup": "tsx src/jobs/scrapeRunner.ts jobup",
     "scrape:jobup:save": "tsx src/jobs/scrapeRunner.ts jobup --save",
-    "scrape:scheduled": "tsx src/jobs/scheduledScrapeRunner.ts"
+    "scrape:scheduled": "tsx src/jobs/scheduledScrapeRunner.ts",
+    "scrape:cron": "tsx src/jobs/scrapeCronRunner.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
