@@ -1,4 +1,12 @@
-import type { CompaniesResponse, Job, JobStatus, JobsResponse, LatestScrapeRunResponse, OutreachStatus } from "./types";
+import type {
+  CompaniesResponse,
+  Job,
+  JobStatus,
+  JobsResponse,
+  LatestScrapeRunResponse,
+  OutreachStatus,
+  ScrapeRunsResponse,
+} from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
@@ -62,6 +70,11 @@ export async function fetchCompanies(): Promise<CompaniesResponse> {
 
 export async function fetchLatestScrapeRun(): Promise<LatestScrapeRunResponse> {
   return apiFetch<LatestScrapeRunResponse>("/scrape-runs/latest");
+}
+
+export async function fetchScrapeRuns(limit = 10): Promise<ScrapeRunsResponse> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  return apiFetch<ScrapeRunsResponse>(`/scrape-runs?${params.toString()}`);
 }
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {

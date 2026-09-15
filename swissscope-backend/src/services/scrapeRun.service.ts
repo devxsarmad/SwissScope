@@ -65,6 +65,18 @@ export async function getLatestScrapeRun() {
   return run ? toScrapeRunResponse(run) : null;
 }
 
+export async function listScrapeRuns(limit = 10) {
+  const safeLimit = Math.min(Math.max(limit, 1), 50);
+  const runs = await prisma.scrapeRun.findMany({
+    orderBy: {
+      startedAt: "desc",
+    },
+    take: safeLimit,
+  });
+
+  return runs.map(toScrapeRunResponse);
+}
+
 type ScrapeRunModel = Awaited<ReturnType<typeof prisma.scrapeRun.findFirst>> & {};
 
 function toScrapeRunResponse(run: NonNullable<ScrapeRunModel>) {

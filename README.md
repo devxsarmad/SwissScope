@@ -187,6 +187,7 @@ Available endpoints:
 - `PATCH /jobs/:id/outreach` with notes, contact details, outreach status, and date fields
 - `GET /companies`
 - `GET /scrape-runs/latest`
+- `GET /scrape-runs?limit=5`
 
 Start the frontend from `swissscope-frontend`:
 
@@ -194,10 +195,10 @@ Start the frontend from `swissscope-frontend`:
 npm run dev
 ```
 
-The frontend listens on `http://localhost:3000` by default and reads the backend URL from `NEXT_PUBLIC_API_URL`. The dashboard shows saved jobs, company names, locations, detected tech tags, workload text, workflow status, posting freshness, public applicant counts when available, outreach notes/contact fields on the detail page, computed match scores, mobile cards, and a desktop table. Filters support search text, city, status, and minimum score. Status dropdowns update PostgreSQL through the API and keep the dashboard state in sync. The dashboard also shows the latest scheduled scrape result so stale automation is visible.
+The frontend listens on `http://localhost:3000` by default and reads the backend URL from `NEXT_PUBLIC_API_URL`. The dashboard shows saved jobs, company names, locations, detected tech tags, workload text, workflow status, posting freshness, public applicant counts when available, outreach notes/contact fields on the detail page, computed match scores, mobile cards, and a desktop table. Filters support search text, city, status, and minimum score. Status dropdowns update PostgreSQL through the API and keep the dashboard state in sync. The dashboard also shows scrape automation health, latest run totals, recent run history, and a stale-data warning when the latest successful scrape is older than six hours.
 
 ## Verification
 
-Validated with Node 24.11.0 and Prisma 7.10.0. The backend schema validates, the TypeScript code typechecks, the keyword scoring, relevance filter, freshness normalization, and JobCloud JSON-LD parser have focused tests, and the scraper save command has been verified against local PostgreSQL. The stricter relevance filter was verified against the current SwissDevJobs, jobs.ch, and jobup.ch feeds and removed unrelated C++, Python, PHP, mobile, and German-only rows from the local database. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, `/jobs?status=SHORTLISTED`, `PATCH /jobs/:id/status`, `PATCH /jobs/:id/outreach`, `/companies`, and `/scrape-runs/latest`. The frontend passes typecheck, lint, and production build with Next.js 16 using the webpack build path, and the running dashboard was smoke-tested against the local API.
+Validated with Node 24.11.0 and Prisma 7.10.0. The backend schema validates, the TypeScript code typechecks, the keyword scoring, relevance filter, freshness normalization, and JobCloud JSON-LD parser have focused tests, and the scraper save command has been verified against local PostgreSQL. The stricter relevance filter was verified against the current SwissDevJobs, jobs.ch, and jobup.ch feeds and removed unrelated C++, Python, PHP, mobile, and German-only rows from the local database. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, `/jobs?status=SHORTLISTED`, `PATCH /jobs/:id/status`, `PATCH /jobs/:id/outreach`, `/companies`, `/scrape-runs/latest`, and `/scrape-runs?limit=5`. The frontend passes typecheck, lint, and production build with Next.js 16 using the webpack build path, and the running dashboard was smoke-tested against the local API.
 
 The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app.

@@ -85,3 +85,8 @@ export type ScrapeRun = {
 export type LatestScrapeRunResponse = {
   scrapeRun: ScrapeRun | null;
 };
+
+export type ScrapeRunsResponse = {
+  count: number;
+  scrapeRuns: ScrapeRun[];
+};
