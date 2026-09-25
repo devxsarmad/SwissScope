@@ -55,7 +55,7 @@ const EXCLUDED_STACK_PATTERNS = [
   { label: "Python/FastAPI-first", pattern: /\b(?:python|fastapi)\b/i },
   { label: "Java-first", pattern: /\bjava\b/i },
   { label: "C/C++-first", pattern: /\b(?:c\+\+|c\/c\+\+|embedded c|c engineer)\b/i },
-  { label: ".NET-first", pattern: /\b(?:\.net|c#|csharp|asp\.net)\b/i },
+  { label: ".NET-first", pattern: /(?:\b(?:c#|csharp|asp\.net)\b|\.net\b)/i },
   { label: "PHP-first", pattern: /\b(?:php|symfony|drupal|laravel)\b/i },
   { label: "Ruby-first", pattern: /\b(?:ruby|rails)\b/i },
   { label: "Go-first", pattern: /\b(?:golang|go developer|go engineer)\b/i },

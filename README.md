@@ -2,7 +2,7 @@
 
 SwissScope is a personal Swiss tech job intelligence tool. It collects Switzerland-based software engineering roles, filters them to a focused JavaScript/TypeScript full-stack and AI application profile, normalizes the data, stores postings in PostgreSQL, and ranks matches so outreach can focus on relevant companies.
 
-The backend is built with TypeScript, Express, Node.js, Prisma, PostgreSQL, Axios, and Cheerio. The frontend is a Next.js TypeScript app with Tailwind CSS and shadcn/ui. The current implementation includes a local database setup, SwissDevJobs, jobs.ch, and jobup.ch scrapers, strict role relevance filtering, durable job/company saving, workflow status tracking, posting freshness metadata, outreach tracking, scheduled scrape run tracking, a standalone keyword scoring service, APIs for jobs and companies, and a dashboard for browsing saved roles by company, city, status, and match score.
+The backend is built with TypeScript, Express, Node.js, Prisma, PostgreSQL, Axios, and Cheerio. The frontend is a Next.js TypeScript app with Tailwind CSS and shadcn/ui. The current implementation includes a local database setup, SwissDevJobs, jobs.ch, jobup.ch, and arbeit.swiss/Job-Room scrapers, strict role relevance filtering, durable job/company saving, workflow status tracking, posting freshness metadata, outreach tracking, scheduled scrape run tracking, a standalone keyword scoring service, APIs for jobs and companies, and a dashboard for browsing saved roles by company, city, status, and match score.
 
 ## Architecture
 
@@ -10,6 +10,7 @@ The scraper layer follows a small adapter pattern:
 
 - `BaseScraper` defines the shared `fetch`, `parse`, `normalize`, and `scrape` flow.
 - Site scrapers live in `src/scrapers/sites` and only handle site-specific parsing. The JobCloud scraper reads JSON-LD from jobs.ch and jobup.ch search/detail pages.
+- The arbeit.swiss scraper reads Job-Room's public search API and maps each advertisement into the shared job shape.
 - `normalizeData.ts` converts raw source data into one common job shape.
 - `jobRelevance.service.ts` keeps scraping focused on the target stack and rejects unrelated roles before they reach the dashboard.
 - `company.service.ts` and `job.service.ts` save normalized jobs with Prisma.
@@ -105,6 +106,7 @@ Run one scraper without saving:
 npm run scrape:swissdevjobs
 npm run scrape:jobsch
 npm run scrape:jobup
+npm run scrape:arbeitswiss
 ```
 
 Run every registered scraper without saving:
@@ -119,6 +121,7 @@ Run scrapers and save relevant results to PostgreSQL:
 npm run scrape:swissdevjobs:save
 npm run scrape:jobsch:save
 npm run scrape:jobup:save
+npm run scrape:arbeitswiss:save
 npm run scrape:all:save
 ```
 
@@ -138,7 +141,7 @@ npm run scrape:cron
 
 The scheduler runs the same scrape cycle every three hours by default, controlled by `SCRAPE_CRON_INTERVAL_HOURS=3`. It also runs once on startup unless `SCRAPE_CRON_RUN_ON_START=false` is set. If a previous scrape is still running, the next interval is skipped so two scrapes never write to PostgreSQL at the same time.
 
-The SwissDevJobs scraper tries the public API and RSS feed first. Direct requests to `swissdevjobs.ch` currently redirect to JobCopilot/security pages from this environment, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint. The jobs.ch and jobup.ch scrapers read public JSON-LD from search and detail pages, including posting dates when available, then apply the same target-stack relevance filter before logging or saving rows. A command can return zero jobs when the current public results do not match the strict SwissScope profile.
+The SwissDevJobs scraper tries the public API and RSS feed first. Direct requests to `swissdevjobs.ch` currently redirect to JobCopilot/security pages from this environment, so the command falls back to the public SwissDevJobs Telegram feed through a reader endpoint. The jobs.ch and jobup.ch scrapers read public JSON-LD from search and detail pages. The arbeit.swiss scraper queries Job-Room's public, unauthenticated search endpoint. All sources capture posting dates when available and apply the same target-stack relevance filter before logging or saving rows. A command can return zero jobs when the current public results do not match the strict SwissScope profile.
 
 Remove previously saved rows that no longer match the target profile:
 
@@ -199,6 +202,6 @@ The frontend listens on `http://localhost:3000` by default and reads the backend
 
 ## Verification
 
-Validated with Node 24.11.0 and Prisma 7.10.0. The backend schema validates, the TypeScript code typechecks, the keyword scoring, relevance filter, freshness normalization, and JobCloud JSON-LD parser have focused tests, and the scraper save command has been verified against local PostgreSQL. The stricter relevance filter was verified against the current SwissDevJobs, jobs.ch, and jobup.ch feeds and removed unrelated C++, Python, PHP, mobile, and German-only rows from the local database. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, `/jobs?status=SHORTLISTED`, `PATCH /jobs/:id/status`, `PATCH /jobs/:id/outreach`, `/companies`, `/scrape-runs/latest`, and `/scrape-runs?limit=5`. The frontend passes typecheck, lint, and production build with Next.js 16 using the webpack build path, and the running dashboard was smoke-tested against the local API.
+Validated with Node 24.11.0 and Prisma 7.10.0. The backend schema validates, the TypeScript code typechecks, the keyword scoring, relevance filter, freshness normalization, JobCloud JSON-LD parser, and Job-Room response mapper have focused tests, and the scraper save command has been verified against local PostgreSQL. The stricter relevance filter was verified against the current SwissDevJobs, jobs.ch, jobup.ch, and Job-Room feeds and rejects unrelated C++, .NET, Python, PHP, mobile, and German-only roles. The Express API was verified locally through `/health`, `/jobs`, `/jobs/:id`, `/jobs?city=Zurich&minScore=10`, `/jobs?status=SHORTLISTED`, `PATCH /jobs/:id/status`, `PATCH /jobs/:id/outreach`, `/companies`, `/scrape-runs/latest`, and `/scrape-runs?limit=5`. The frontend passes typecheck, lint, and production build with Next.js 16 using the webpack build path, and the running dashboard was smoke-tested against the local API.
 
 The initial `npm audit` reports four high-severity affected packages through Prisma's `deepmerge-ts` and `mysql2` dependencies. npm's proposed automatic fix downgrades Prisma to version 6, so it was not applied. Recheck upstream fixes before extending or deploying the app.

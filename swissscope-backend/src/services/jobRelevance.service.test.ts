@@ -65,6 +65,18 @@ test("rejects Python and ML research roles", () => {
   assert.ok(result.excludeReasons.includes("ML Research"));
 });
 
+test("rejects .NET roles when the stack name starts with punctuation", () => {
+  const result = explainJobRelevance(
+    job({
+      title: "Développeur .Net",
+      description: "Build React and TypeScript interfaces for C#/.NET services.",
+    }),
+  );
+
+  assert.equal(result.isRelevant, false);
+  assert.ok(result.excludeReasons.includes(".NET-first"));
+});
+
 test("rejects German mandatory roles", () => {
   const result = explainJobRelevance(
     job({

@@ -6,6 +6,7 @@ export type SiteConfig = {
   readerFeedUrl?: string;
   telegramFeedUrl?: string;
   searchPath?: string;
+  apiPath?: string;
   searchTerms?: string[];
   location?: string;
   maxJobs: number;
@@ -66,6 +67,16 @@ export const sitesConfig = {
     maxJobs: 20,
     maxDetailRequests: 8,
     requestTimeoutMs: 12000,
+    userAgent:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  },
+  arbeitswiss: {
+    name: "arbeit.swiss / Job-Room",
+    baseUrl: "https://www.job-room.ch",
+    apiPath: "/jobadservice/api/jobAdvertisements/_search",
+    searchTerms: ["React TypeScript", "Next.js Node.js", "Full Stack JavaScript", "NestJS", "OpenAI LLM"],
+    maxJobs: 20,
+    requestTimeoutMs: 15000,
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
   },

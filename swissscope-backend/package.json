@@ -27,6 +27,8 @@
     "scrape:jobsch:save": "tsx src/jobs/scrapeRunner.ts jobsch --save",
     "scrape:jobup": "tsx src/jobs/scrapeRunner.ts jobup",
     "scrape:jobup:save": "tsx src/jobs/scrapeRunner.ts jobup --save",
+    "scrape:arbeitswiss": "tsx src/jobs/scrapeRunner.ts arbeitswiss",
+    "scrape:arbeitswiss:save": "tsx src/jobs/scrapeRunner.ts arbeitswiss --save",
     "scrape:scheduled": "tsx src/jobs/scheduledScrapeRunner.ts",
     "scrape:cron": "tsx src/jobs/scrapeCronRunner.ts"
   },
