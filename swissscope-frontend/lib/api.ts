@@ -87,8 +87,28 @@ async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`SwissScope API request failed with ${response.status}`);
+    const message = await readApiError(response);
+    throw new Error(message ?? `SwissScope API request failed with ${response.status}`);
   }
 
   return response.json() as Promise<T>;
+}
+
+async function readApiError(response: Response): Promise<string | null> {
+  try {
+    const payload: unknown = await response.json();
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "error" in payload &&
+      typeof payload.error === "string" &&
+      payload.error.trim()
+    ) {
+      return payload.error.trim();
+    }
+  } catch {
+    // The fallback includes the HTTP status when the response is not JSON.
+  }
+
+  return null;
 }
