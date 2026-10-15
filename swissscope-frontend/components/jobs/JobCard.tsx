@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, MapPin } from "lucide-react";
+import { BriefcaseBusiness, ExternalLink, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Job, JobStatus } from "@/lib/types";
@@ -36,6 +36,10 @@ export function JobCard({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="size-4 text-primary" />
           <span className="min-w-0 truncate">{job.location ?? "Remote/unspecified"}</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <BriefcaseBusiness className="size-4 text-primary" />
+          <span>{job.workload ?? "Workload unknown"}</span>
         </div>
         <JobFreshness job={job} />
         <div className="flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-3">
