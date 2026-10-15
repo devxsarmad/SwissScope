@@ -43,13 +43,14 @@ export function JobFilters({
           aria-label="Minimum score"
           min={0}
           max={100}
+          step={1}
           placeholder="Min score"
           type="number"
           value={filters.minScore ?? ""}
           onChange={(event) =>
             onChange({
               ...filters,
-              minScore: event.target.value ? Number(event.target.value) : undefined,
+              minScore: parseMinimumScore(event.target.value),
             })
           }
         />
@@ -82,4 +83,13 @@ export function JobFilters({
       </div>
     </div>
   );
+}
+
+function parseMinimumScore(value: string): number | undefined {
+  if (!value) return undefined;
+
+  const score = Number(value);
+  if (!Number.isFinite(score)) return undefined;
+
+  return Math.min(100, Math.max(0, score));
 }
