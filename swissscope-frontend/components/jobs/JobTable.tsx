@@ -79,6 +79,9 @@ export function JobTable({
                     {job.techStack.slice(0, 4).map((tech) => (
                       <TechChip key={tech} label={tech} />
                     ))}
+                    {job.techStack.length > 4 ? (
+                      <span className="self-center text-xs font-medium text-muted-foreground">+{job.techStack.length - 4} more</span>
+                    ) : null}
                     {job.techStack.length === 0 ? (
                       <span className="text-xs text-muted-foreground">None detected</span>
                     ) : null}

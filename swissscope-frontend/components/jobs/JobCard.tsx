@@ -54,6 +54,9 @@ export function JobCard({
           {job.techStack.slice(0, 5).map((tech) => (
             <TechChip key={tech} label={tech} />
           ))}
+          {job.techStack.length > 5 ? (
+            <span className="self-center text-xs font-medium text-muted-foreground">+{job.techStack.length - 5} more</span>
+          ) : null}
           {job.techStack.length === 0 ? <span className="text-sm text-muted-foreground">No tech detected</span> : null}
         </div>
         <Button
