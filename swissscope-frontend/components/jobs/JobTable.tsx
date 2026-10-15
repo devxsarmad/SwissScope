@@ -85,7 +85,18 @@ export function JobTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button size="icon-sm" variant="ghost" render={<a href={job.url} rel="noreferrer" target="_blank" />}>
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    render={
+                      <a
+                        aria-label={`View ${job.title} at ${job.company.name} (opens in a new tab)`}
+                        href={job.url}
+                        rel="noreferrer"
+                        target="_blank"
+                      />
+                    }
+                  >
                     <ExternalLink className="size-4" />
                   </Button>
                 </TableCell>

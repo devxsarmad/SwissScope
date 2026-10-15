@@ -56,7 +56,19 @@ export function JobCard({
           ))}
           {job.techStack.length === 0 ? <span className="text-sm text-muted-foreground">No tech detected</span> : null}
         </div>
-        <Button className="w-full gap-2" size="lg" variant="outline" render={<a href={job.url} rel="noreferrer" target="_blank" />}>
+        <Button
+          className="w-full gap-2"
+          size="lg"
+          variant="outline"
+          render={
+            <a
+              aria-label={`View ${job.title} at ${job.company.name} (opens in a new tab)`}
+              href={job.url}
+              rel="noreferrer"
+              target="_blank"
+            />
+          }
+        >
           <ExternalLink className="size-4" />
           View posting
         </Button>
