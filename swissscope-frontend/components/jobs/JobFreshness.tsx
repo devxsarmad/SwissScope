@@ -13,7 +13,7 @@ export function JobFreshness({ job, compact = false }: { job: Job; compact?: boo
       {typeof job.applicantCount === "number" ? (
         <span className="inline-flex items-center gap-1.5">
           <Users className="size-3.5 text-primary" />
-          {job.applicantCount} applicants
+          {job.applicantCount} {job.applicantCount === 1 ? "applicant" : "applicants"}
         </span>
       ) : null}
     </div>
