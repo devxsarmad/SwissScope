@@ -47,4 +47,8 @@ export function JobStatusSelect({
   );
 }
 
+export function getJobStatusLabel(status: JobStatus): string {
+  return STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status;
+}
+
 export { STATUS_CLASSES, STATUS_OPTIONS };

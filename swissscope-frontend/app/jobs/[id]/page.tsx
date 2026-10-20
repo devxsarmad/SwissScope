@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { JobFreshness } from "@/components/jobs/JobFreshness";
+import { getJobStatusLabel } from "@/components/jobs/JobStatusSelect";
 import { MatchScoreBadge } from "@/components/jobs/MatchScoreBadge";
 import { OutreachPanel } from "@/components/jobs/OutreachPanel";
 import { TechChip } from "@/components/jobs/TechChip";
@@ -23,7 +24,7 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
               <div className="flex flex-wrap items-center gap-3">
                 <MatchScoreBadge score={job.matchScore.score} />
                 <Badge className="rounded-full px-3 py-1" variant="secondary">
-                  {job.status}
+                  {getJobStatusLabel(job.status)}
                 </Badge>
               </div>
             </div>
