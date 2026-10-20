@@ -58,6 +58,12 @@ export function JobsDashboard() {
 
       <JobFilters filters={filters} onChange={setFilters} onReset={() => setFilters(EMPTY_FILTERS)} />
 
+      {!isLoading && !error ? (
+        <p aria-live="polite" className="text-sm text-muted-foreground">
+          Showing {visibleJobs.length} {visibleJobs.length === 1 ? "job" : "jobs"}.
+        </p>
+      ) : null}
+
       {error ? (
         <Card className="rounded-lg border-destructive/40">
           <CardContent className="py-6 text-sm text-destructive">{error}</CardContent>
