@@ -27,7 +27,18 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
                 </Badge>
               </div>
             </div>
-            <Button className="gap-2" variant="outline" render={<a href={job.url} rel="noreferrer" target="_blank" />}>
+            <Button
+              className="gap-2"
+              variant="outline"
+              render={
+                <a
+                  aria-label={`Open ${job.title} at ${job.company.name} (opens in a new tab)`}
+                  href={job.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                />
+              }
+            >
               <ExternalLink className="size-4" />
               Open posting
             </Button>
