@@ -79,6 +79,7 @@ export async function fetchScrapeRuns(limit = 10): Promise<ScrapeRunsResponse> {
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
+    cache: "no-store",
     ...init,
     headers: {
       Accept: "application/json",
