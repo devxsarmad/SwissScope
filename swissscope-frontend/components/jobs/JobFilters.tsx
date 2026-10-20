@@ -20,6 +20,10 @@ export function JobFilters({
   onChange: (filters: JobFiltersValue) => void;
   onReset: () => void;
 }) {
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value !== undefined && value !== "",
+  );
+
   return (
     <div className="min-w-0 rounded-2xl border border-border/70 bg-card/95 p-4 shadow-sm shadow-slate-950/5 ring-1 ring-white/70 dark:ring-white/5">
       <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_150px_150px_160px_auto]">
@@ -72,7 +76,13 @@ export function JobFilters({
             </option>
           ))}
         </select>
-        <Button className="gap-2" type="button" variant="outline" onClick={onReset}>
+        <Button
+          className="gap-2"
+          disabled={!hasActiveFilters}
+          type="button"
+          variant="outline"
+          onClick={onReset}
+        >
           <X className="size-4" />
           Reset
         </Button>
