@@ -95,7 +95,7 @@ export function JobTable({
                       <a
                         aria-label={`View ${job.title} at ${job.company.name} (opens in a new tab)`}
                         href={job.url}
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         target="_blank"
                       />
                     }
