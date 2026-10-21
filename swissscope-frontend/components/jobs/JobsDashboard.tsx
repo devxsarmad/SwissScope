@@ -65,13 +65,13 @@ export function JobsDashboard() {
       ) : null}
 
       {error ? (
-        <Card className="rounded-lg border-destructive/40">
+        <Card role="alert" className="rounded-lg border-destructive/40">
           <CardContent className="py-6 text-sm text-destructive">{error}</CardContent>
         </Card>
       ) : null}
 
       {isLoading ? (
-        <Card className="rounded-lg">
+        <Card role="status" aria-live="polite" className="rounded-lg">
           <CardContent className="py-8 text-sm text-muted-foreground">Loading saved jobs...</CardContent>
         </Card>
       ) : null}
