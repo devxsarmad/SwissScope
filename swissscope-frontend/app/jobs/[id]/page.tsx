@@ -69,7 +69,7 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
             ) : null}
           </div>
 
-          <p className="text-sm leading-7 text-muted-foreground">{job.description}</p>
+          <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">{job.description}</p>
         </CardContent>
       </Card>
 
