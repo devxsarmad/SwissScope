@@ -1,4 +1,5 @@
-import { ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +16,14 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
 
   return (
     <main className="mx-auto grid min-h-screen w-full max-w-4xl gap-6 px-4 py-8 sm:px-6">
+      <Button
+        className="w-fit gap-2"
+        variant="ghost"
+        render={<Link href="/" />}
+      >
+        <ArrowLeft aria-hidden="true" className="size-4" />
+        Back to jobs
+      </Button>
       <Card className="rounded-2xl">
         <CardContent className="space-y-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
