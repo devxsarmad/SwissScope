@@ -64,6 +64,9 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
             {job.techStack.map((tech) => (
               <TechChip key={tech} label={tech} />
             ))}
+            {job.techStack.length === 0 ? (
+              <span className="text-sm text-muted-foreground">No technologies detected</span>
+            ) : null}
           </div>
 
           <p className="text-sm leading-7 text-muted-foreground">{job.description}</p>
