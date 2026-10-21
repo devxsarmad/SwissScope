@@ -55,8 +55,14 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
           </div>
 
           <div className="grid gap-3 rounded-2xl bg-muted/50 p-4 text-sm text-muted-foreground md:grid-cols-3">
-            <span>{job.location ?? "Remote/unspecified"}</span>
-            <span>{job.workload ?? "Workload unknown"}</span>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wide text-foreground">Location</span>
+              <span>{job.location ?? "Remote/unspecified"}</span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wide text-foreground">Workload</span>
+              <span>{job.workload ?? "Workload unknown"}</span>
+            </div>
             <JobFreshness job={job} />
           </div>
 
