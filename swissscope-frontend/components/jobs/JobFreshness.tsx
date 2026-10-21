@@ -8,12 +8,12 @@ export function JobFreshness({ job, compact = false }: { job: Job; compact?: boo
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground ${compact ? "text-xs" : "text-sm"}`}>
       <span className="inline-flex items-center gap-1.5">
-        <Clock3 className="size-3.5 text-primary" />
+        <Clock3 aria-hidden="true" className="size-3.5 text-primary" />
         {postedDateTime ? <time dateTime={postedDateTime}>{postedText}</time> : postedText}
       </span>
       {typeof job.applicantCount === "number" ? (
         <span className="inline-flex items-center gap-1.5">
-          <Users className="size-3.5 text-primary" />
+          <Users aria-hidden="true" className="size-3.5 text-primary" />
           {job.applicantCount} {job.applicantCount === 1 ? "applicant" : "applicants"}
         </span>
       ) : null}

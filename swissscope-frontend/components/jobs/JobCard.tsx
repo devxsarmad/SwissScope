@@ -34,11 +34,11 @@ export function JobCard({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <MapPin className="size-4 text-primary" />
+          <MapPin aria-hidden="true" className="size-4 text-primary" />
           <span className="min-w-0 truncate">{job.location ?? "Remote/unspecified"}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <BriefcaseBusiness className="size-4 text-primary" />
+          <BriefcaseBusiness aria-hidden="true" className="size-4 text-primary" />
           <span>{job.workload ?? "Workload unknown"}</span>
         </div>
         <JobFreshness job={job} />
