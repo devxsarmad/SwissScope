@@ -113,7 +113,7 @@ function StatCard({
       <CardHeader className="flex flex-row items-center justify-between gap-3 pb-0">
         <CardTitle className="text-sm font-semibold text-muted-foreground">{label}</CardTitle>
         <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="size-4" />
+          <Icon aria-hidden="true" className="size-4" />
         </div>
       </CardHeader>
       <CardContent>
