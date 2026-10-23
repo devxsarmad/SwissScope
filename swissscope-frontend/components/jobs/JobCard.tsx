@@ -46,6 +46,7 @@ export function JobCard({
           <span className="text-sm font-medium text-muted-foreground">Status</span>
           <JobStatusSelect
             disabled={updatingJobId === job.id}
+            label={`Status for ${job.title} at ${job.company.name}`}
             value={job.status}
             onChange={(status) => onStatusChange(job.id, status)}
           />

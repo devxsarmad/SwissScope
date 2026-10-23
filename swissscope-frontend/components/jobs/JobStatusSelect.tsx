@@ -24,15 +24,17 @@ const STATUS_CLASSES: Record<JobStatus, string> = {
 export function JobStatusSelect({
   value,
   disabled,
+  label = "Job status",
   onChange,
 }: {
   value: JobStatus;
   disabled?: boolean;
+  label?: string;
   onChange: (status: JobStatus) => void;
 }) {
   return (
     <select
-      aria-label="Job status"
+      aria-label={label}
       className={`h-9 rounded-full border px-3 text-xs font-semibold shadow-xs outline-none transition-colors focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 ${STATUS_CLASSES[value]}`}
       disabled={disabled}
       value={value}

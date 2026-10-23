@@ -70,6 +70,7 @@ export function JobTable({
                 <TableCell>
                   <JobStatusSelect
                     disabled={updatingJobId === job.id}
+                    label={`Status for ${job.title} at ${job.company.name}`}
                     value={job.status}
                     onChange={(status) => onStatusChange(job.id, status)}
                   />
