@@ -34,11 +34,13 @@ export function OutreachPanel({ job }: { job: Job }) {
   const [savedJob, setSavedJob] = useState(job);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
     setMessage(null);
+    setSaveFailed(false);
 
     try {
       const updatedJob = await updateJobOutreach(savedJob.id, toPayload(form));
@@ -46,6 +48,7 @@ export function OutreachPanel({ job }: { job: Job }) {
       setForm(toFormState(updatedJob));
       setMessage("Outreach details saved.");
     } catch (error) {
+      setSaveFailed(true);
       setMessage(error instanceof Error ? error.message : "Failed to save outreach details.");
     } finally {
       setIsSaving(false);
@@ -56,7 +59,7 @@ export function OutreachPanel({ job }: { job: Job }) {
     <Card className="rounded-2xl">
       <CardHeader className="gap-2">
         <div className="flex items-center gap-2 text-primary">
-          <NotebookPen className="size-4" />
+          <NotebookPen aria-hidden="true" className="size-4" />
           <span className="text-xs font-semibold uppercase tracking-wide">Outreach CRM</span>
         </div>
         <CardTitle>Notes and follow-up</CardTitle>
@@ -90,9 +93,15 @@ export function OutreachPanel({ job }: { job: Job }) {
           <TextArea label="Interview notes" value={form.interviewNotes} onChange={(interviewNotes) => setForm((current) => ({ ...current, interviewNotes }))} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">{message ?? "Track contacts, applications, and next follow-up steps for this role."}</p>
+            <p
+              aria-live="polite"
+              className={`text-sm ${saveFailed ? "text-destructive" : "text-muted-foreground"}`}
+              role={saveFailed ? "alert" : "status"}
+            >
+              {message ?? "Track contacts, applications, and next follow-up steps for this role."}
+            </p>
             <Button className="gap-2" disabled={isSaving} type="submit">
-              <Save className="size-4" />
+              <Save aria-hidden="true" className="size-4" />
               {isSaving ? "Saving..." : "Save outreach"}
             </Button>
           </div>
@@ -119,7 +128,7 @@ function TextInput({
     <label className="grid gap-1.5 text-sm font-medium">
       {label}
       <div className="relative">
-        {Icon ? <Icon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /> : null}
+        {Icon ? <Icon aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /> : null}
         <Input className={Icon ? "pl-9" : undefined} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
       </div>
     </label>
