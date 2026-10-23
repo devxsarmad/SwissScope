@@ -28,6 +28,9 @@ export function JobTable({
     <div className="hidden min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-card/95 shadow-sm shadow-slate-950/5 ring-1 ring-white/70 md:block dark:ring-white/5">
       <div className="overflow-x-auto">
         <Table className="min-w-[1280px] table-fixed">
+          <caption className="sr-only">
+            Saved jobs with company, location, freshness, match score, workflow status, technologies, and posting link.
+          </caption>
           <colgroup>
             <col className="w-[30%]" />
             <col className="w-[18%]" />
