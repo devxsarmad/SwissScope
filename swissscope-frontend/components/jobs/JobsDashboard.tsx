@@ -32,8 +32,11 @@ export function JobsDashboard() {
 
   async function handleStatusChange(jobId: string, status: JobStatus) {
     setUpdatingJobId(jobId);
-    await setJobStatus(jobId, status);
-    setUpdatingJobId(null);
+    try {
+      await setJobStatus(jobId, status);
+    } finally {
+      setUpdatingJobId(null);
+    }
   }
 
   return (
