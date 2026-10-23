@@ -49,7 +49,7 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
                 />
               }
             >
-              <ExternalLink className="size-4" />
+              <ExternalLink aria-hidden="true" className="size-4" />
               Open posting
             </Button>
           </div>
@@ -75,7 +75,12 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
             ) : null}
           </div>
 
-          <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">{job.description}</p>
+          <section aria-labelledby="job-description-heading" className="space-y-2">
+            <h2 id="job-description-heading" className="text-lg font-semibold tracking-tight">
+              Job description
+            </h2>
+            <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">{job.description}</p>
+          </section>
         </CardContent>
       </Card>
 
