@@ -14,7 +14,7 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
       <CardHeader className="gap-2 sm:flex sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
-            <RefreshCw className="size-4 text-primary" />
+            <RefreshCw aria-hidden="true" className="size-4 text-primary" />
             Scrape automation
           </CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">Latest scheduler health and recent scrape history.</p>
@@ -22,7 +22,7 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
         {latestRun ? <StatusBadge status={latestRun.status} /> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading ? <p className="text-sm text-muted-foreground">Loading scrape history...</p> : null}
+        {isLoading ? <p aria-live="polite" className="text-sm text-muted-foreground" role="status">Loading scrape history...</p> : null}
 
         {!isLoading && error ? <HealthMessage tone="danger" message={error} /> : null}
 
@@ -71,7 +71,7 @@ function HealthMessage({ tone, message }: { tone: "success" | "warning" | "dange
     danger: "border-destructive/30 bg-destructive/10 text-destructive",
   }[tone];
 
-  return <div className={`rounded-xl border px-3 py-2 text-sm ${toneClass}`}>{message}</div>;
+  return <div className={`rounded-xl border px-3 py-2 text-sm ${toneClass}`} role={tone === "danger" ? "alert" : "status"}>{message}</div>;
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
@@ -104,10 +104,10 @@ function StatusBadge({ status }: { status: ScrapeRunStatus }) {
 }
 
 function StatusIcon({ status }: { status: ScrapeRunStatus }) {
-  if (status === "SUCCESS") return <CheckCircle2 className="size-4 text-emerald-600" />;
-  if (status === "RUNNING") return <Clock className="size-4 text-primary" />;
-  if (status === "PARTIAL_FAILURE") return <AlertTriangle className="size-4 text-amber-600" />;
-  return <XCircle className="size-4 text-destructive" />;
+  if (status === "SUCCESS") return <CheckCircle2 aria-hidden="true" className="size-4 text-emerald-600" />;
+  if (status === "RUNNING") return <Clock aria-hidden="true" className="size-4 text-primary" />;
+  if (status === "PARTIAL_FAILURE") return <AlertTriangle aria-hidden="true" className="size-4 text-amber-600" />;
+  return <XCircle aria-hidden="true" className="size-4 text-destructive" />;
 }
 
 function getAutomationHealth(run: ScrapeRun | null): { tone: "success" | "warning" | "danger"; message: string } {
