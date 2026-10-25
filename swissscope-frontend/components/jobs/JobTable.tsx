@@ -43,14 +43,14 @@ export function JobTable({
           </colgroup>
           <TableHeader className="bg-muted/60">
             <TableRow className="hover:bg-transparent">
-              <TableHead>Role</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Freshness</TableHead>
-              <TableHead>Score</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Tech</TableHead>
-              <TableHead className="text-right">Open</TableHead>
+              <TableHead scope="col">Role</TableHead>
+              <TableHead scope="col">Company</TableHead>
+              <TableHead scope="col">Location</TableHead>
+              <TableHead scope="col">Freshness</TableHead>
+              <TableHead scope="col">Score</TableHead>
+              <TableHead scope="col">Status</TableHead>
+              <TableHead scope="col">Tech</TableHead>
+              <TableHead className="text-right" scope="col">Open</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
