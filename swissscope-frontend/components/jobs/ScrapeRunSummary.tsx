@@ -39,9 +39,9 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
             </div>
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Recent runs</p>
-              <div className="divide-y divide-border/70 overflow-hidden rounded-xl border border-border/70 bg-background/60">
+              <ul className="divide-y divide-border/70 overflow-hidden rounded-xl border border-border/70 bg-background/60">
                 {scrapeRuns.map((run) => (
-                  <div key={run.id} className="grid gap-2 p-3 text-sm sm:grid-cols-[1fr_auto] sm:items-center">
+                  <li key={run.id} className="grid gap-2 p-3 text-sm sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusIcon status={run.status} />
@@ -55,9 +55,9 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
                       </p>
                     </div>
                     <SourceSummary run={run} />
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </>
         ) : null}
