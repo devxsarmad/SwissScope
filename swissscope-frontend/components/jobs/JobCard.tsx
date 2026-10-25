@@ -18,7 +18,7 @@ export function JobCard({
   onStatusChange: (jobId: string, status: JobStatus) => void;
 }) {
   return (
-    <Card className="rounded-2xl md:hidden">
+    <Card className="rounded-2xl md:hidden" role="listitem">
       <CardHeader className="gap-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

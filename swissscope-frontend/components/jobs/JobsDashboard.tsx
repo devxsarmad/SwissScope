@@ -88,7 +88,7 @@ export function JobsDashboard() {
       {!isLoading && !error && visibleJobs.length > 0 ? (
         <>
           <JobTable jobs={visibleJobs} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
-          <div className="grid gap-3">
+          <div className="grid gap-3" role="list" aria-label="Saved jobs">
             {visibleJobs.map((job) => (
               <JobCard key={job.id} job={job} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
             ))}
