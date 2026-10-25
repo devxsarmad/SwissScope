@@ -45,7 +45,9 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusIcon status={run.status} />
-                        <span className="font-medium">{formatDate(run.finishedAt ?? run.startedAt)}</span>
+                        <time className="font-medium" dateTime={run.finishedAt ?? run.startedAt}>
+                          {formatDate(run.finishedAt ?? run.startedAt)}
+                        </time>
                         <StatusBadge status={run.status} />
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
