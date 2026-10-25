@@ -54,17 +54,20 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
             </Button>
           </div>
 
-          <div className="grid gap-3 rounded-2xl bg-muted/50 p-4 text-sm text-muted-foreground md:grid-cols-3">
+          <dl className="grid gap-3 rounded-2xl bg-muted/50 p-4 text-sm text-muted-foreground md:grid-cols-3">
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wide text-foreground">Location</span>
-              <span>{job.location ?? "Remote/unspecified"}</span>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-foreground">Location</dt>
+              <dd>{job.location ?? "Remote/unspecified"}</dd>
             </div>
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wide text-foreground">Workload</span>
-              <span>{job.workload ?? "Workload unknown"}</span>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-foreground">Workload</dt>
+              <dd>{job.workload ?? "Workload unknown"}</dd>
             </div>
-            <JobFreshness job={job} />
-          </div>
+            <div>
+              <dt className="sr-only">Posting freshness</dt>
+              <dd><JobFreshness job={job} /></dd>
+            </div>
+          </dl>
 
           <div className="flex flex-wrap gap-1.5">
             {job.techStack.map((tech) => (
