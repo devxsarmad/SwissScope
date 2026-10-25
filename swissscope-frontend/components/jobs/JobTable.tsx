@@ -104,7 +104,7 @@ export function JobTable({
                       />
                     }
                   >
-                    <ExternalLink className="size-4" />
+                    <ExternalLink aria-hidden="true" className="size-4" />
                   </Button>
                 </TableCell>
               </TableRow>

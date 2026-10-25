@@ -73,7 +73,7 @@ export function JobCard({
             />
           }
         >
-          <ExternalLink className="size-4" />
+          <ExternalLink aria-hidden="true" className="size-4" />
           View posting
         </Button>
       </CardContent>
