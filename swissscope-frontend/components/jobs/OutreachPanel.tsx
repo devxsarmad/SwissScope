@@ -67,9 +67,10 @@ export function OutreachPanel({ job }: { job: Job }) {
       <CardContent>
         <form className="grid gap-5" onSubmit={handleSubmit}>
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="grid gap-1.5 text-sm font-medium">
+            <label className="grid gap-1.5 text-sm font-medium" htmlFor="outreach-status">
               Outreach status
               <select
+                id="outreach-status"
                 className="h-10 rounded-xl border border-input/80 bg-card/80 px-3 text-sm text-foreground shadow-xs outline-none transition-colors focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20"
                 value={form.outreachStatus}
                 onChange={(event) => setForm((current) => ({ ...current, outreachStatus: event.target.value as OutreachStatus }))}
@@ -124,27 +125,32 @@ function TextInput({
   type?: string;
   icon?: React.ComponentType<{ className?: string }>;
 }) {
+  const id = `outreach-${label.toLowerCase().replaceAll(" ", "-")}`;
+
   return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+    <div className="grid gap-1.5 text-sm font-medium">
+      <label htmlFor={id}>{label}</label>
       <div className="relative">
         {Icon ? <Icon aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /> : null}
-        <Input className={Icon ? "pl-9" : undefined} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+        <Input id={id} className={Icon ? "pl-9" : undefined} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
       </div>
-    </label>
+    </div>
   );
 }
 
 function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  const id = `outreach-${label.toLowerCase().replaceAll(" ", "-")}`;
+
   return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+    <div className="grid gap-1.5 text-sm font-medium">
+      <label htmlFor={id}>{label}</label>
       <textarea
+        id={id}
         className="min-h-28 rounded-xl border border-input/80 bg-card/80 px-3 py-2 text-sm text-foreground shadow-xs outline-none transition-colors placeholder:text-muted-foreground/80 focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
-    </label>
+    </div>
   );
 }
 
