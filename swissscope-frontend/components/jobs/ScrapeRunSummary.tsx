@@ -91,7 +91,13 @@ function SourceSummary({ run }: { run: ScrapeRun }) {
     return <span className="text-xs text-muted-foreground sm:text-right">{run.sourceResults.length} sources ok</span>;
   }
 
-  return <span className="text-xs text-destructive sm:text-right">{failedSources.length} source issue(s)</span>;
+  const failedNames = failedSources.map((source) => source.source).join(", ");
+
+  return (
+    <span className="text-xs text-destructive sm:text-right" title={`Failed sources: ${failedNames}`}>
+      {failedSources.length} source issue(s): {failedNames}
+    </span>
+  );
 }
 
 function StatusBadge({ status }: { status: ScrapeRunStatus }) {
