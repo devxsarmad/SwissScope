@@ -99,7 +99,7 @@ export function OutreachPanel({ job }: { job: Job }) {
               className={`text-sm ${saveFailed ? "text-destructive" : "text-muted-foreground"}`}
               role={saveFailed ? "alert" : "status"}
             >
-              {message ?? "Track contacts, applications, and next follow-up steps for this role."}
+              {message ?? (isSaving ? "Saving outreach details..." : "Track contacts, applications, and next follow-up steps for this role.")}
             </p>
             <Button className="gap-2" disabled={isSaving} type="submit">
               <Save aria-hidden="true" className="size-4" />
