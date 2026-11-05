@@ -47,7 +47,7 @@ export function JobFilters({
           onChange={(event) => onChange({ ...filters, city: event.target.value })}
         />
         <Input
-          aria-label="Minimum score"
+          aria-label="Minimum score (0 to 100)"
           min={0}
           max={100}
           step={1}
