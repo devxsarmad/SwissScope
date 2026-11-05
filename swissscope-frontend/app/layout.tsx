@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SwissScope",
+  title: "SwissScope | Swiss tech job intelligence",
   description: "Personal Swiss tech job intelligence dashboard",
 };
 
