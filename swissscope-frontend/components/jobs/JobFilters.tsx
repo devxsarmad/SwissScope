@@ -20,8 +20,11 @@ export function JobFilters({
   onChange: (filters: JobFiltersValue) => void;
   onReset: () => void;
 }) {
-  const hasActiveFilters = Object.values(filters).some(
-    (value) => value !== undefined && value !== "",
+  const hasActiveFilters = Boolean(
+    filters.query ||
+      filters.city ||
+      filters.status ||
+      filters.minScore !== undefined,
   );
 
   return (
