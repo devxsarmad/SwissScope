@@ -51,7 +51,7 @@ export function useJobs(filters: JobFilters = {}) {
   }, [city, company, minScore, status]);
 
   async function setJobStatus(jobId: string, status: JobStatus) {
-    const previousJobs = state.jobs;
+    const previousJob = state.jobs.find((job) => job.id === jobId);
     setState((current) => ({
       ...current,
       jobs: current.jobs.map((job) => (job.id === jobId ? { ...job, status } : job)),
@@ -67,7 +67,9 @@ export function useJobs(filters: JobFilters = {}) {
     } catch (caughtError) {
       setState((current) => ({
         ...current,
-        jobs: previousJobs,
+        jobs: previousJob
+          ? current.jobs.map((job) => (job.id === jobId ? previousJob : job))
+          : current.jobs,
         error: caughtError instanceof Error ? caughtError.message : "Failed to update job status",
       }));
     }
