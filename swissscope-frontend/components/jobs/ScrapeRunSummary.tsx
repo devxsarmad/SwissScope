@@ -95,7 +95,7 @@ function SourceSummary({ run }: { run: ScrapeRun }) {
 
   return (
     <span className="text-xs text-destructive sm:text-right" title={`Failed sources: ${failedNames}`}>
-      {failedSources.length} source issue(s): {failedNames}
+      {failedSources.length} failed {failedSources.length === 1 ? "source" : "sources"}: {failedNames}
     </span>
   );
 }
