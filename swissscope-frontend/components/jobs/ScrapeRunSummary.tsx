@@ -10,7 +10,7 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
   const health = getAutomationHealth(latestRun);
 
   return (
-    <Card className="rounded-2xl border-primary/10 bg-gradient-to-br from-card to-muted/30">
+    <Card aria-busy={isLoading} className="rounded-2xl border-primary/10 bg-gradient-to-br from-card to-muted/30">
       <CardHeader className="gap-2 sm:flex sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
