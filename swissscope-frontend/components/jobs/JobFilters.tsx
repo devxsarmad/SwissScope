@@ -99,9 +99,10 @@ export function JobFilters({
 }
 
 function parseMinimumScore(value: string): number | undefined {
-  if (!value) return undefined;
+  const normalizedValue = value.trim();
+  if (!normalizedValue) return undefined;
 
-  const score = Number(value);
+  const score = Number(normalizedValue);
   if (!Number.isFinite(score)) return undefined;
 
   return Math.min(100, Math.max(0, score));
