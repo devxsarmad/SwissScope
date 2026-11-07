@@ -82,8 +82,8 @@ export function OutreachPanel({ job }: { job: Job }) {
                 ))}
               </select>
             </label>
-            <TextInput label="Contact name" icon={Contact} value={form.contactName} onChange={(contactName) => setForm((current) => ({ ...current, contactName }))} />
-            <TextInput label="Contact email" type="email" value={form.contactEmail} onChange={(contactEmail) => setForm((current) => ({ ...current, contactEmail }))} />
+            <TextInput label="Contact name" autoComplete="name" icon={Contact} value={form.contactName} onChange={(contactName) => setForm((current) => ({ ...current, contactName }))} />
+            <TextInput label="Contact email" type="email" autoComplete="email" value={form.contactEmail} onChange={(contactEmail) => setForm((current) => ({ ...current, contactEmail }))} />
             <TextInput label="LinkedIn URL" type="url" value={form.contactLinkedIn} onChange={(contactLinkedIn) => setForm((current) => ({ ...current, contactLinkedIn }))} />
             <TextInput label="Applied date" icon={CalendarDays} type="date" value={form.appliedAt} onChange={(appliedAt) => setForm((current) => ({ ...current, appliedAt }))} />
             <TextInput label="Follow-up date" icon={CalendarDays} type="date" value={form.followUpAt} onChange={(followUpAt) => setForm((current) => ({ ...current, followUpAt }))} />
@@ -117,12 +117,14 @@ function TextInput({
   value,
   onChange,
   type = "text",
+  autoComplete,
   icon: Icon,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   type?: string;
+  autoComplete?: string;
   icon?: React.ComponentType<{ className?: string }>;
 }) {
   const id = `outreach-${label.toLowerCase().replaceAll(" ", "-")}`;
@@ -132,7 +134,7 @@ function TextInput({
       <label htmlFor={id}>{label}</label>
       <div className="relative">
         {Icon ? <Icon aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /> : null}
-        <Input id={id} className={Icon ? "pl-9" : undefined} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+        <Input id={id} className={Icon ? "pl-9" : undefined} type={type} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} />
       </div>
     </div>
   );
