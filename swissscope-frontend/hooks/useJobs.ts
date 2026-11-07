@@ -17,6 +17,7 @@ export function useJobs(filters: JobFilters = {}) {
     isLoading: true,
     error: null,
   });
+  const [statusError, setStatusError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -51,6 +52,7 @@ export function useJobs(filters: JobFilters = {}) {
   }, [city, company, minScore, status]);
 
   async function setJobStatus(jobId: string, status: JobStatus) {
+    setStatusError(null);
     const previousJob = state.jobs.find((job) => job.id === jobId);
     setState((current) => ({
       ...current,
@@ -70,10 +72,10 @@ export function useJobs(filters: JobFilters = {}) {
         jobs: previousJob
           ? current.jobs.map((job) => (job.id === jobId ? previousJob : job))
           : current.jobs,
-        error: caughtError instanceof Error ? caughtError.message : "Failed to update job status",
       }));
+      setStatusError(caughtError instanceof Error ? caughtError.message : "Failed to update job status");
     }
   }
 
-  return { ...state, setJobStatus };
+  return { ...state, statusError, setJobStatus };
 }

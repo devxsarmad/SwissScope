@@ -25,7 +25,7 @@ export function JobsDashboard() {
     }),
     [filters.city, filters.minScore, filters.status],
   );
-  const { jobs, isLoading, error, setJobStatus } = useJobs(apiFilters);
+  const { jobs, isLoading, error, statusError, setJobStatus } = useJobs(apiFilters);
   const [updatingJobId, setUpdatingJobId] = useState<string | null>(null);
   const { scrapeRuns, isLoading: isScrapeRunsLoading, error: scrapeRunsError } = useScrapeRuns(5);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
@@ -67,6 +67,12 @@ export function JobsDashboard() {
         <p aria-live="polite" className="text-sm text-muted-foreground">
           Showing {visibleJobs.length} {visibleJobs.length === 1 ? "job" : "jobs"}.
         </p>
+      ) : null}
+
+      {statusError ? (
+        <Card role="alert" className="rounded-lg border-destructive/40">
+          <CardContent className="py-4 text-sm text-destructive">{statusError}</CardContent>
+        </Card>
       ) : null}
 
       {error ? (
