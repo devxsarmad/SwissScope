@@ -40,7 +40,7 @@ export function JobsDashboard() {
   }
 
   return (
-    <section className="min-w-0 space-y-6">
+    <section id="jobs" className="min-w-0 space-y-6">
       <div className="flex min-w-0 flex-col gap-3">
         <Badge variant="outline" className="w-fit rounded-full border-primary/20 bg-primary/10 px-3 py-1 font-semibold text-primary">
           Live data from PostgreSQL
@@ -54,8 +54,8 @@ export function JobsDashboard() {
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={BriefcaseBusiness} label="Jobs" value={String(stats.totalJobs)} />
-        <StatCard icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
-        <StatCard icon={Target} label="Best Score" value={`${stats.bestScore}%`} />
+        <StatCard id="companies" icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
+        <StatCard id="scores" icon={Target} label="Best Score" value={`${stats.bestScore}%`} />
         <StatCard icon={Activity} label="Active" value={String(stats.activeJobs)} />
       </div>
 
@@ -100,16 +100,18 @@ export function JobsDashboard() {
 }
 
 function StatCard({
+  id,
   icon: Icon,
   label,
   value,
 }: {
+  id?: string;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
 }) {
   return (
-    <Card className="rounded-2xl bg-gradient-to-br from-card to-muted/35">
+    <Card id={id} className="rounded-2xl bg-gradient-to-br from-card to-muted/35">
       <CardHeader className="flex flex-row items-center justify-between gap-3 pb-0">
         <CardTitle className="text-sm font-semibold text-muted-foreground">{label}</CardTitle>
         <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
