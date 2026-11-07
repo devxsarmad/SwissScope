@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Activity, BriefcaseBusiness, Building2, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useJobs } from "@/hooks/useJobs";
 import { useScrapeRuns } from "@/hooks/useScrapeRuns";
@@ -81,7 +82,14 @@ export function JobsDashboard() {
 
       {!isLoading && !error && visibleJobs.length === 0 ? (
         <Card className="rounded-lg">
-          <CardContent className="py-8 text-sm text-muted-foreground">No jobs match the current filters.</CardContent>
+          <CardContent className="flex flex-col items-start gap-3 py-8">
+            <p className="text-sm text-muted-foreground">No jobs match the current filters.</p>
+            {Object.values(filters).some((value) => value !== undefined && value !== "") ? (
+              <Button type="button" variant="outline" onClick={() => setFilters(EMPTY_FILTERS)}>
+                Clear filters
+              </Button>
+            ) : null}
+          </CardContent>
         </Card>
       ) : null}
 
