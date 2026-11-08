@@ -30,6 +30,9 @@ export function JobsDashboard() {
   const { scrapeRuns, isLoading: isScrapeRunsLoading, error: scrapeRunsError } = useScrapeRuns(5);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value !== undefined && value !== "",
+  );
 
   async function handleStatusChange(jobId: string, status: JobStatus) {
     setUpdatingJobIds((current) => new Set(current).add(jobId));
@@ -94,8 +97,10 @@ export function JobsDashboard() {
       {!isLoading && !error && visibleJobs.length === 0 ? (
         <Card className="rounded-lg">
           <CardContent className="flex flex-col items-start gap-3 py-8">
-            <p className="text-sm text-muted-foreground">No jobs match the current filters.</p>
-            {Object.values(filters).some((value) => value !== undefined && value !== "") ? (
+            <p className="text-sm text-muted-foreground">
+              {hasActiveFilters ? "No jobs match the current filters." : "No saved jobs yet."}
+            </p>
+            {hasActiveFilters ? (
               <Button type="button" variant="outline" onClick={() => setFilters(EMPTY_FILTERS)}>
                 Clear filters
               </Button>
