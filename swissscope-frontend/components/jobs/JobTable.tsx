@@ -17,11 +17,11 @@ import { TechChip } from "./TechChip";
 
 export function JobTable({
   jobs,
-  updatingJobId,
+  updatingJobIds,
   onStatusChange,
 }: {
   jobs: Job[];
-  updatingJobId?: string | null;
+  updatingJobIds: Set<string>;
   onStatusChange: (jobId: string, status: JobStatus) => void;
 }) {
   return (
@@ -72,7 +72,7 @@ export function JobTable({
                 </TableCell>
                 <TableCell>
                   <JobStatusSelect
-                    disabled={updatingJobId === job.id}
+                    disabled={updatingJobIds.has(job.id)}
                     label={`Status for ${job.title} at ${job.company.name}`}
                     value={job.status}
                     onChange={(status) => onStatusChange(job.id, status)}

@@ -10,11 +10,11 @@ import { TechChip } from "./TechChip";
 
 export function JobCard({
   job,
-  updatingJobId,
+  updatingJobIds,
   onStatusChange,
 }: {
   job: Job;
-  updatingJobId?: string | null;
+  updatingJobIds: Set<string>;
   onStatusChange: (jobId: string, status: JobStatus) => void;
 }) {
   return (
@@ -45,7 +45,7 @@ export function JobCard({
         <div className="flex items-center justify-between gap-3 rounded-xl bg-muted/60 p-3">
           <span className="text-sm font-medium text-muted-foreground">Status</span>
           <JobStatusSelect
-            disabled={updatingJobId === job.id}
+            disabled={updatingJobIds.has(job.id)}
             label={`Status for ${job.title} at ${job.company.name}`}
             value={job.status}
             onChange={(status) => onStatusChange(job.id, status)}

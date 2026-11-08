@@ -26,17 +26,21 @@ export function JobsDashboard() {
     [filters.city, filters.minScore, filters.status],
   );
   const { jobs, isLoading, error, statusError, setJobStatus } = useJobs(apiFilters);
-  const [updatingJobId, setUpdatingJobId] = useState<string | null>(null);
+  const [updatingJobIds, setUpdatingJobIds] = useState<Set<string>>(() => new Set());
   const { scrapeRuns, isLoading: isScrapeRunsLoading, error: scrapeRunsError } = useScrapeRuns(5);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
 
   async function handleStatusChange(jobId: string, status: JobStatus) {
-    setUpdatingJobId(jobId);
+    setUpdatingJobIds((current) => new Set(current).add(jobId));
     try {
       await setJobStatus(jobId, status);
     } finally {
-      setUpdatingJobId(null);
+      setUpdatingJobIds((current) => {
+        const next = new Set(current);
+        next.delete(jobId);
+        return next;
+      });
     }
   }
 
@@ -102,10 +106,10 @@ export function JobsDashboard() {
 
       {!isLoading && !error && visibleJobs.length > 0 ? (
         <>
-          <JobTable jobs={visibleJobs} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
+          <JobTable jobs={visibleJobs} updatingJobIds={updatingJobIds} onStatusChange={handleStatusChange} />
           <div className="grid gap-3" role="list" aria-label="Saved jobs">
             {visibleJobs.map((job) => (
-              <JobCard key={job.id} job={job} updatingJobId={updatingJobId} onStatusChange={handleStatusChange} />
+              <JobCard key={job.id} job={job} updatingJobIds={updatingJobIds} onStatusChange={handleStatusChange} />
             ))}
           </div>
         </>
