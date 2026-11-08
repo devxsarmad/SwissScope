@@ -63,8 +63,8 @@ export function JobsDashboard() {
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard icon={BriefcaseBusiness} label="Jobs" value={String(stats.totalJobs)} />
         <StatCard id="companies" icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
-        <StatCard id="scores" icon={Target} label="Best Score" value={`${stats.bestScore}%`} />
-        <StatCard icon={Target} label="Average Score" value={`${stats.averageScore}%`} />
+        <StatCard id="scores" icon={Target} label="Best Score" value={stats.totalJobs ? `${stats.bestScore}%` : "—"} />
+        <StatCard icon={Target} label="Average Score" value={stats.totalJobs ? `${stats.averageScore}%` : "—"} />
         <StatCard icon={Activity} label="Active" value={String(stats.activeJobs)} />
       </div>
 
