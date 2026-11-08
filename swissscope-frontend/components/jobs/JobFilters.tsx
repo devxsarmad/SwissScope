@@ -43,6 +43,7 @@ export function JobFilters({
         </label>
         <Input
           aria-label="City"
+          autoComplete="address-level2"
           placeholder="City"
           value={filters.city ?? ""}
           onChange={(event) => onChange({ ...filters, city: event.target.value })}
