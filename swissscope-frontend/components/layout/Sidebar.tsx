@@ -8,8 +8,8 @@ const navItems = [
 
 export function Sidebar() {
   return (
-    <aside className="rounded-lg border bg-card p-2 md:min-h-[calc(100vh-6.5rem)]">
-      <nav className="grid gap-1">
+    <aside aria-label="Dashboard sidebar" className="rounded-lg border bg-card p-2 md:min-h-[calc(100vh-6.5rem)]">
+      <nav aria-label="Dashboard sections" className="grid gap-1">
         {navItems.map((item) => (
           <a
             key={item.label}
