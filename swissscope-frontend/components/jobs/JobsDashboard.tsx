@@ -30,8 +30,11 @@ export function JobsDashboard() {
   const { scrapeRuns, isLoading: isScrapeRunsLoading, error: scrapeRunsError } = useScrapeRuns(5);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
-  const hasActiveFilters = Object.values(filters).some(
-    (value) => value !== undefined && value !== "",
+  const hasActiveFilters = Boolean(
+    filters.query?.trim() ||
+      filters.city?.trim() ||
+      filters.status ||
+      filters.minScore !== undefined,
   );
 
   async function handleStatusChange(jobId: string, status: JobStatus) {

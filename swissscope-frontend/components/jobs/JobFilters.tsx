@@ -21,8 +21,8 @@ export function JobFilters({
   onReset: () => void;
 }) {
   const hasActiveFilters = Boolean(
-    filters.query ||
-      filters.city ||
+    filters.query?.trim() ||
+      filters.city?.trim() ||
       filters.status ||
       filters.minScore !== undefined,
   );
