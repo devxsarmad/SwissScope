@@ -150,16 +150,18 @@ function StatCard({
 }
 
 function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
-  const query = filters.query?.trim().toLowerCase();
+  const query = normalizeSearchText(filters.query ?? "");
   if (!query) return jobs;
 
   return jobs.filter((job) =>
-    [job.title, job.company.name, job.location, job.techStack.join(" ")]
+    normalizeSearchText([job.title, job.company.name, job.location, job.techStack.join(" ")]
       .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(query),
+      .join(" ")).includes(query),
   );
+}
+
+function normalizeSearchText(value: string): string {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
 function buildStats(jobs: Job[]) {
