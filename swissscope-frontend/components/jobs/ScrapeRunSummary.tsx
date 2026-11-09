@@ -51,7 +51,7 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
                         <StatusBadge status={run.status} />
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {run.totalFetched} fetched · {run.totalCreated} new · {run.totalUpdated} updated · {run.archivedJobs} archived
+                        {formatCount(run.totalFetched)} fetched · {formatCount(run.totalCreated)} new · {formatCount(run.totalUpdated)} updated · {formatCount(run.archivedJobs)} archived
                       </p>
                     </div>
                     <SourceSummary run={run} />
@@ -80,7 +80,7 @@ function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-xl border border-border/70 bg-background/60 p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-lg font-semibold">{value}</p>
+      <p className="mt-1 text-lg font-semibold">{formatCount(value)}</p>
     </div>
   );
 }
@@ -88,14 +88,14 @@ function Metric({ label, value }: { label: string; value: number }) {
 function SourceSummary({ run }: { run: ScrapeRun }) {
   const failedSources = run.sourceResults.filter((source) => source.status === "failed");
   if (failedSources.length === 0) {
-    return <span className="text-xs text-muted-foreground sm:text-right">{run.sourceResults.length} sources ok</span>;
+    return <span className="text-xs text-muted-foreground sm:text-right">{formatCount(run.sourceResults.length)} sources ok</span>;
   }
 
   const failedNames = failedSources.map((source) => source.source).join(", ");
 
   return (
     <span className="text-xs text-destructive sm:text-right" title={`Failed sources: ${failedNames}`}>
-      {failedSources.length} failed {failedSources.length === 1 ? "source" : "sources"}: {failedNames}
+      {formatCount(failedSources.length)} failed {failedSources.length === 1 ? "source" : "sources"}: {failedNames}
     </span>
   );
 }
@@ -137,6 +137,10 @@ function getAutomationHealth(run: ScrapeRun | null): { tone: "success" | "warnin
     tone: "success",
     message: `Data is fresh. Last successful scrape was ${formatRelativeHours(ageHours)} ago.`,
   };
+}
+
+function formatCount(value: number): string {
+  return new Intl.NumberFormat().format(value);
 }
 
 function formatRelativeHours(ageHours: number): string {
