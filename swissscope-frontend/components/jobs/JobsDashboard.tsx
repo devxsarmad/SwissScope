@@ -64,11 +64,11 @@ export function JobsDashboard() {
       </div>
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard icon={BriefcaseBusiness} label="Jobs" value={String(stats.totalJobs)} />
-        <StatCard id="companies" icon={Building2} label="Companies" value={String(stats.totalCompanies)} />
+        <StatCard icon={BriefcaseBusiness} label="Jobs" value={formatCount(stats.totalJobs)} />
+        <StatCard id="companies" icon={Building2} label="Companies" value={formatCount(stats.totalCompanies)} />
         <StatCard id="scores" icon={Target} label="Best Score" value={stats.totalJobs ? `${stats.bestScore}%` : "—"} />
         <StatCard icon={Target} label="Average Score" value={stats.totalJobs ? `${stats.averageScore}%` : "—"} />
-        <StatCard icon={Activity} label="Active" value={String(stats.activeJobs)} />
+        <StatCard icon={Activity} label="Active" value={formatCount(stats.activeJobs)} />
       </div>
 
       <JobFilters filters={filters} onChange={setFilters} onReset={() => setFilters(EMPTY_FILTERS)} />
@@ -165,6 +165,10 @@ function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
 
 function normalizeSearchText(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function formatCount(value: number): string {
+  return new Intl.NumberFormat().format(value);
 }
 
 function buildStats(jobs: Job[]) {
