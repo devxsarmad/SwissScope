@@ -28,7 +28,8 @@ export function JobFilters({
   );
 
   return (
-    <div className="min-w-0 rounded-2xl border border-border/70 bg-card/95 p-4 shadow-sm shadow-slate-950/5 ring-1 ring-white/70 dark:ring-white/5">
+    <fieldset className="min-w-0 rounded-2xl border border-border/70 bg-card/95 p-4 shadow-sm shadow-slate-950/5 ring-1 ring-white/70 dark:ring-white/5">
+      <legend className="sr-only">Filter saved jobs</legend>
       <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_150px_150px_160px_auto]">
         <label className="relative min-w-0">
           <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -96,7 +97,7 @@ export function JobFilters({
         <SlidersHorizontal aria-hidden="true" className="size-3.5 text-primary" />
         Filters apply to saved PostgreSQL jobs, workflow status, and computed match scores.
       </div>
-    </div>
+    </fieldset>
   );
 }
 
