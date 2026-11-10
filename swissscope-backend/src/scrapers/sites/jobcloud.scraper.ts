@@ -180,13 +180,23 @@ function toRawJob(posting: JobPostingJson, baseUrl: string, html = ""): RawJob {
     title: posting.title,
     company: posting.hiringOrganization?.name,
     location: formatLocation(posting.jobLocation),
-    url: posting.url ? new URL(posting.url, baseUrl).toString() : "",
+    url: normalizePostingUrl(posting.url, baseUrl),
     description,
     techStack: [],
     workload: formatEmploymentType(posting.employmentType),
     postedAt: posting.datePosted,
     applicantCount: extractApplicantCount(html),
   };
+}
+
+function normalizePostingUrl(url: string | undefined, baseUrl: string): string {
+  if (!url) return "";
+
+  try {
+    return new URL(url, baseUrl).toString();
+  } catch {
+    return "";
+  }
 }
 
 function extractApplicantCount(html: string): number | null {
