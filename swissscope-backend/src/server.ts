@@ -23,7 +23,8 @@ app.use((_req, res) => {
 });
 
 app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  const message = error instanceof Error ? error.message : "Unexpected server error";
+  const detail = error instanceof Error ? error.message : "Unexpected server error";
+  const message = process.env.NODE_ENV === "production" ? "Unexpected server error" : detail;
   res.status(500).json({ error: message });
 });
 
