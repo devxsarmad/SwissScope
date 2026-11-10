@@ -41,8 +41,11 @@ export async function patchJobStatus(req: Request, res: Response) {
   try {
     const job = await updateJobStatus(id, status);
     return res.json(job);
-  } catch {
-    return res.status(404).json({ error: "Job not found" });
+  } catch (error) {
+    if (isPrismaRecordNotFound(error)) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    throw error;
   }
 }
 
@@ -60,8 +63,11 @@ export async function patchJobOutreach(req: Request, res: Response) {
   try {
     const job = await updateJobOutreach(id, update);
     return res.json(job);
-  } catch {
-    return res.status(404).json({ error: "Job not found" });
+  } catch (error) {
+    if (isPrismaRecordNotFound(error)) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    throw error;
   }
 }
 
@@ -93,4 +99,8 @@ function parseMinScore(value: unknown): number | undefined | Error {
   }
 
   return score;
+}
+
+function isPrismaRecordNotFound(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2025";
 }
