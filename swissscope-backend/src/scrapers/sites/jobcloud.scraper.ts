@@ -203,11 +203,11 @@ function extractApplicantCount(html: string): number | null {
   if (!html) return null;
 
   const text = htmlToText(html);
-  const match = text.match(/\b(\d{1,5})\s+(?:applicants?|applications?)\b/i);
+  const match = text.match(/\b(\d[\d,]*)\s+(?:applicants?|applications?)\b/i);
   if (!match?.[1]) return null;
 
-  const count = Number(match[1]);
-  return Number.isInteger(count) && count >= 0 ? count : null;
+  const count = Number(match[1].replaceAll(",", ""));
+  return Number.isSafeInteger(count) && count >= 0 ? count : null;
 }
 
 function htmlToText(html: string): string {
