@@ -37,7 +37,7 @@ export function JobFilters({
             aria-label="Search jobs or companies"
             className="pl-9"
             type="search"
-            placeholder="Search title, company, city, or stack"
+            placeholder="Search title, company, city, workload, or stack"
             value={filters.query ?? ""}
             onChange={(event) => onChange({ ...filters, query: event.target.value })}
           />

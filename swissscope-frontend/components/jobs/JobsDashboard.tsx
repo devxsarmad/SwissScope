@@ -158,7 +158,7 @@ function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
 
   return jobs.filter((job) => {
     const searchableText = normalizeSearchText(
-      [job.title, job.company.name, job.location, job.techStack.join(" ")]
+      [job.title, job.company.name, job.location, job.workload, job.techStack.join(" ")]
         .filter(Boolean)
         .join(" "),
     );
