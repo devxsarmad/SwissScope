@@ -153,14 +153,17 @@ function StatCard({
 }
 
 function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
-  const query = normalizeSearchText(filters.query ?? "");
-  if (!query) return jobs;
+  const queryTerms = normalizeSearchText(filters.query ?? "").split(" ").filter(Boolean);
+  if (queryTerms.length === 0) return jobs;
 
-  return jobs.filter((job) =>
-    normalizeSearchText([job.title, job.company.name, job.location, job.techStack.join(" ")]
-      .filter(Boolean)
-      .join(" ")).includes(query),
-  );
+  return jobs.filter((job) => {
+    const searchableText = normalizeSearchText(
+      [job.title, job.company.name, job.location, job.techStack.join(" ")]
+        .filter(Boolean)
+        .join(" "),
+    );
+    return queryTerms.every((term) => searchableText.includes(term));
+  });
 }
 
 function normalizeSearchText(value: string): string {
