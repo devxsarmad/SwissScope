@@ -167,7 +167,12 @@ function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
 }
 
 function normalizeSearchText(value: string): string {
-  return value.trim().replace(/\s+/g, " ").toLowerCase();
+  return value
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
 }
 
 function formatCount(value: number): string {
