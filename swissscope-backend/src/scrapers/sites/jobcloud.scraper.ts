@@ -203,7 +203,7 @@ function extractApplicantCount(html: string): number | null {
   if (!html) return null;
 
   const text = htmlToText(html);
-  const match = text.match(/\b(\d[\d,]*)\s+(?:applicants?|applications?)\b/i);
+  const match = text.match(/\b(?<![\d,])(\d+(?:,\d{3})*)(?![\d,])\s+(?:applicants?|applications?)\b/i);
   if (!match?.[1]) return null;
 
   const count = Number(match[1].replaceAll(",", ""));
