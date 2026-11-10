@@ -245,7 +245,11 @@ function dedupePostings(postings: JobPostingJson[]): JobPostingJson[] {
 
 function hasType(value: Record<string, unknown>, expectedType: string): boolean {
   const type = value["@type"];
-  return Array.isArray(type) ? type.includes(expectedType) : type === expectedType;
+  const matches = (candidate: unknown) =>
+    typeof candidate === "string" &&
+    (candidate === expectedType || candidate.endsWith(`/${expectedType}`) || candidate.endsWith(`#${expectedType}`));
+
+  return Array.isArray(type) ? type.some(matches) : matches(type);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
