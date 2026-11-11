@@ -27,6 +27,7 @@ export function useJobs(filters: JobFilters = {}) {
       await Promise.resolve();
 
       if (!isMounted) return;
+      setStatusError(null);
       setState((current) => ({ ...current, isLoading: true, error: null }));
 
       try {
