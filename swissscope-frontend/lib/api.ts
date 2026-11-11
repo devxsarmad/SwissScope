@@ -29,7 +29,7 @@ export type JobFilters = {
   status?: JobStatus;
 };
 
-export async function fetchJobs(filters: JobFilters = {}): Promise<JobsResponse> {
+export async function fetchJobs(filters: JobFilters = {}, signal?: AbortSignal): Promise<JobsResponse> {
   const params = new URLSearchParams();
   if (filters.city) params.set("city", filters.city);
   if (filters.company) params.set("company", filters.company);
@@ -37,7 +37,7 @@ export async function fetchJobs(filters: JobFilters = {}): Promise<JobsResponse>
   if (filters.status) params.set("status", filters.status);
 
   const query = params.toString();
-  return apiFetch<JobsResponse>(`/jobs${query ? `?${query}` : ""}`);
+  return apiFetch<JobsResponse>(`/jobs${query ? `?${query}` : ""}`, { signal });
 }
 
 export async function updateJobStatus(id: string, status: JobStatus): Promise<Job> {

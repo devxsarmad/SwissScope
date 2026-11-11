@@ -21,6 +21,7 @@ export function useJobs(filters: JobFilters = {}) {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     async function loadJobs() {
       await Promise.resolve();
@@ -29,7 +30,7 @@ export function useJobs(filters: JobFilters = {}) {
       setState((current) => ({ ...current, isLoading: true, error: null }));
 
       try {
-        const response = await fetchJobs({ city, company, minScore, status });
+        const response = await fetchJobs({ city, company, minScore, status }, controller.signal);
         if (isMounted) {
           setState({ jobs: response.jobs, isLoading: false, error: null });
         }
@@ -48,6 +49,7 @@ export function useJobs(filters: JobFilters = {}) {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [city, company, minScore, status]);
 
