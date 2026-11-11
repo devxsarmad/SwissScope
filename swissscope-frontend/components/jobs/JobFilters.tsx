@@ -34,7 +34,7 @@ export function JobFilters({
         <label className="relative min-w-0">
           <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            aria-label="Search jobs or companies"
+            aria-label="Search jobs by title, company, city, workload, or technology"
             className="pl-9"
             type="search"
             placeholder="Search title, company, city, workload, or stack"
