@@ -43,15 +43,27 @@ export class JobCloudScraper extends BaseScraper<JobCloudPayload, RawJob, Normal
   async fetch(): Promise<JobCloudPayload> {
     const rows = new Map<string, RawJob>();
     const searchTerms = this.config.searchTerms ?? DEFAULT_SEARCH_TERMS;
+    let successfulSearches = 0;
+    const searchErrors: string[] = [];
 
     for (const term of searchTerms) {
-      const searchRows = await this.fetchSearchRows(term);
-      for (const row of searchRows) {
-        const key = row.url || `${row.title}:${row.company}`;
-        if (key && !rows.has(key)) rows.set(key, row);
+      try {
+        const searchRows = await this.fetchSearchRows(term);
+        successfulSearches += 1;
+        for (const row of searchRows) {
+          const key = row.url || `${row.title}:${row.company}`;
+          if (key && !rows.has(key)) rows.set(key, row);
+        }
+      } catch (error) {
+        searchErrors.push(error instanceof Error ? error.message : String(error));
       }
 
       if (rows.size >= this.config.maxJobs) break;
+    }
+
+    if (successfulSearches === 0) {
+      const details = searchErrors.length > 0 ? `: ${searchErrors.join("; ")}` : ". No search terms are configured.";
+      throw new Error(`All ${searchTerms.length} jobs.ch search requests failed${details}`);
     }
 
     const enrichedRows = await this.enrichRows([...rows.values()].slice(0, this.config.maxJobs));
@@ -75,13 +87,9 @@ export class JobCloudScraper extends BaseScraper<JobCloudPayload, RawJob, Normal
     url.searchParams.set("term", term);
     url.searchParams.set("location", this.config.location ?? "Switzerland");
 
-    try {
-      const response = await this.request(url.toString());
-      if (typeof response.data !== "string") return [];
-      return parseJobPostingsFromHtml(response.data).map((posting) => toRawJob(posting, this.config.baseUrl));
-    } catch {
-      return [];
-    }
+    const response = await this.request(url.toString());
+    if (typeof response.data !== "string") return [];
+    return parseJobPostingsFromHtml(response.data).map((posting) => toRawJob(posting, this.config.baseUrl));
   }
 
   private async enrichRows(rows: RawJob[]): Promise<RawJob[]> {
