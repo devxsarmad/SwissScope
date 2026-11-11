@@ -27,7 +27,12 @@ export function JobsDashboard() {
   );
   const { jobs, isLoading, error, statusError, setJobStatus } = useJobs(apiFilters);
   const [updatingJobIds, setUpdatingJobIds] = useState<Set<string>>(() => new Set());
-  const { scrapeRuns, isLoading: isScrapeRunsLoading, error: scrapeRunsError } = useScrapeRuns(5);
+  const {
+    scrapeRuns,
+    isLoading: isScrapeRunsLoading,
+    error: scrapeRunsError,
+    refresh: refreshScrapeRuns,
+  } = useScrapeRuns(5);
   const visibleJobs = useMemo(() => applyClientFilters(jobs, filters), [jobs, filters]);
   const stats = useMemo(() => buildStats(visibleJobs), [visibleJobs]);
   const hasActiveFilters = Boolean(
@@ -60,7 +65,12 @@ export function JobsDashboard() {
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
           Saved Swiss engineering roles ranked by fit for your full-stack and AI profile.
         </p>
-        <ScrapeRunSummary scrapeRuns={scrapeRuns} isLoading={isScrapeRunsLoading} error={scrapeRunsError} />
+        <ScrapeRunSummary
+          scrapeRuns={scrapeRuns}
+          isLoading={isScrapeRunsLoading}
+          error={scrapeRunsError}
+          onRetry={refreshScrapeRuns}
+        />
       </div>
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-5">

@@ -16,21 +16,23 @@ export function useScrapeRuns(limit = 5) {
     isLoading: true,
     error: null,
   });
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadScrapeRuns() {
+      setState((current) => ({ ...current, isLoading: true, error: null }));
       try {
         const response = await fetchScrapeRuns(limit);
         if (isMounted) setState({ scrapeRuns: response.scrapeRuns, isLoading: false, error: null });
       } catch (error) {
         if (isMounted) {
-          setState({
-            scrapeRuns: [],
+          setState((current) => ({
+            ...current,
             isLoading: false,
             error: error instanceof Error ? error.message : "Failed to load scrape history",
-          });
+          }));
         }
       }
     }
@@ -40,7 +42,10 @@ export function useScrapeRuns(limit = 5) {
     return () => {
       isMounted = false;
     };
-  }, [limit]);
+  }, [limit, refreshKey]);
 
-  return state;
+  return {
+    ...state,
+    refresh: () => setRefreshKey((current) => current + 1),
+  };
 }

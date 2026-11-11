@@ -1,11 +1,12 @@
 import { AlertTriangle, CheckCircle2, Clock, RefreshCw, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ScrapeRun, ScrapeRunStatus } from "@/lib/types";
 
 const STALE_AFTER_HOURS = 6;
 
-export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns: ScrapeRun[]; isLoading: boolean; error: string | null }) {
+export function ScrapeRunSummary({ scrapeRuns, isLoading, error, onRetry }: { scrapeRuns: ScrapeRun[]; isLoading: boolean; error: string | null; onRetry: () => void }) {
   const latestRun = scrapeRuns[0] ?? null;
   const health = getAutomationHealth(latestRun);
 
@@ -24,7 +25,12 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error }: { scrapeRuns:
       <CardContent className="space-y-4">
         {isLoading ? <p aria-live="polite" className="text-sm text-muted-foreground" role="status">Loading scrape history...</p> : null}
 
-        {!isLoading && error ? <HealthMessage tone="danger" message={error} /> : null}
+        {!isLoading && error ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2">
+            <p className="text-sm text-destructive" role="alert">{error}</p>
+            <Button type="button" variant="outline" size="sm" onClick={onRetry}>Retry</Button>
+          </div>
+        ) : null}
 
         {!isLoading && !error && !latestRun ? <HealthMessage tone="warning" message="No scheduled scrape has run yet." /> : null}
 
