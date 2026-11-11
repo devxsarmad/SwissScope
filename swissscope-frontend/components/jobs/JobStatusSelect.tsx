@@ -35,6 +35,7 @@ export function JobStatusSelect({
   return (
     <select
       aria-label={label}
+      aria-busy={disabled}
       className={`h-9 rounded-full border px-3 text-xs font-semibold shadow-xs outline-none transition-colors focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 ${STATUS_CLASSES[value]}`}
       disabled={disabled}
       value={value}
