@@ -18,6 +18,7 @@ export function useJobs(filters: JobFilters = {}) {
     error: null,
   });
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -52,7 +53,7 @@ export function useJobs(filters: JobFilters = {}) {
       isMounted = false;
       controller.abort();
     };
-  }, [city, company, minScore, status]);
+  }, [city, company, minScore, status, refreshKey]);
 
   async function setJobStatus(jobId: string, status: JobStatus) {
     setStatusError(null);
@@ -80,5 +81,10 @@ export function useJobs(filters: JobFilters = {}) {
     }
   }
 
-  return { ...state, statusError, setJobStatus };
+  return {
+    ...state,
+    statusError,
+    setJobStatus,
+    refresh: () => setRefreshKey((current) => current + 1),
+  };
 }

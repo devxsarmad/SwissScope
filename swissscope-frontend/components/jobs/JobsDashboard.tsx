@@ -25,7 +25,14 @@ export function JobsDashboard() {
     }),
     [filters.city, filters.minScore, filters.status],
   );
-  const { jobs, isLoading, error, statusError, setJobStatus } = useJobs(apiFilters);
+  const {
+    jobs,
+    isLoading,
+    error,
+    statusError,
+    setJobStatus,
+    refresh: refreshJobs,
+  } = useJobs(apiFilters);
   const [updatingJobIds, setUpdatingJobIds] = useState<Set<string>>(() => new Set());
   const {
     scrapeRuns,
@@ -97,7 +104,10 @@ export function JobsDashboard() {
 
       {error ? (
         <Card role="alert" className="rounded-lg border-destructive/40">
-          <CardContent className="py-6 text-sm text-destructive">{error}</CardContent>
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 py-5">
+            <p className="text-sm text-destructive">{error}</p>
+            <Button type="button" variant="outline" onClick={refreshJobs}>Retry</Button>
+          </CardContent>
         </Card>
       ) : null}
 
