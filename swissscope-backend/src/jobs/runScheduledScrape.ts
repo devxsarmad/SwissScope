@@ -55,13 +55,19 @@ export async function runScheduledScrape(options: RunScheduledScrapeOptions = {}
       }
     }
 
-    const archiveResult = await archiveStaleJobs(staleAfterDays);
+    let archivedJobs = 0;
+    if (sourceResults.every((result) => result.status === "success")) {
+      const archiveResult = await archiveStaleJobs(staleAfterDays);
+      archivedJobs = archiveResult.archived;
+      console.log(`Archived ${archiveResult.archived} stale inactive jobs older than ${archiveResult.cutoff}`);
+    } else {
+      console.warn("Skipped stale-job archival because one or more scraper sources failed.");
+    }
+
     const finishedRun = await finishScrapeRun(run.id, {
       sourceResults,
-      archivedJobs: archiveResult.archived,
+      archivedJobs,
     });
-
-    console.log(`Archived ${archiveResult.archived} stale inactive jobs older than ${archiveResult.cutoff}`);
     console.log(
       `Finished scheduled scrape run ${finishedRun.id}: ${finishedRun.status}, fetched ${finishedRun.totalFetched}, created ${finishedRun.totalCreated}, updated ${finishedRun.totalUpdated}`,
     );
