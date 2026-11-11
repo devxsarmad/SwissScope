@@ -86,6 +86,10 @@ function Metric({ label, value }: { label: string; value: number }) {
 }
 
 function SourceSummary({ run }: { run: ScrapeRun }) {
+  if (run.sourceResults.length === 0) {
+    return <span className="text-xs text-muted-foreground sm:text-right">No source results</span>;
+  }
+
   const failedSources = run.sourceResults.filter((source) => source.status === "failed");
   if (failedSources.length === 0) {
     return <span className="text-xs text-muted-foreground sm:text-right">{formatCount(run.sourceResults.length)} sources ok</span>;
