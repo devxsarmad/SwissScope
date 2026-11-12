@@ -108,7 +108,7 @@ export function JobsDashboard() {
         <Card role="alert" className="rounded-lg border-destructive/40">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 py-5">
             <p className="text-sm text-destructive">{error}</p>
-            <Button type="button" variant="outline" onClick={refreshJobs}>Retry</Button>
+            <Button aria-label="Retry loading jobs" type="button" variant="outline" onClick={refreshJobs}>Retry</Button>
           </CardContent>
         </Card>
       ) : null}
