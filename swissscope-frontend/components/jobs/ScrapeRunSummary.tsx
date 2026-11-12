@@ -28,7 +28,7 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error, onRetry }: { sc
         {!isLoading && error ? (
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2">
             <p className="text-sm text-destructive" role="alert">{error}</p>
-            <Button type="button" variant="outline" size="sm" onClick={onRetry}>Retry</Button>
+            <Button aria-label="Retry loading scrape history" type="button" variant="outline" size="sm" onClick={onRetry}>Retry</Button>
           </div>
         ) : null}
 
