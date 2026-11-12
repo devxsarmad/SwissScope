@@ -46,6 +46,7 @@ export function JobsDashboard() {
   const hasActiveFilters = Boolean(
     filters.query?.trim() ||
       filters.city?.trim() ||
+      filters.company?.trim() ||
       filters.status ||
       filters.minScore !== undefined,
   );
