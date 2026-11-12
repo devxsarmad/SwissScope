@@ -72,9 +72,9 @@ export async function fetchLatestScrapeRun(): Promise<LatestScrapeRunResponse> {
   return apiFetch<LatestScrapeRunResponse>("/scrape-runs/latest");
 }
 
-export async function fetchScrapeRuns(limit = 10): Promise<ScrapeRunsResponse> {
+export async function fetchScrapeRuns(limit = 10, signal?: AbortSignal): Promise<ScrapeRunsResponse> {
   const params = new URLSearchParams({ limit: String(limit) });
-  return apiFetch<ScrapeRunsResponse>(`/scrape-runs?${params.toString()}`);
+  return apiFetch<ScrapeRunsResponse>(`/scrape-runs?${params.toString()}`, { signal });
 }
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {

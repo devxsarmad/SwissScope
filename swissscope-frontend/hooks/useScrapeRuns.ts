@@ -20,11 +20,12 @@ export function useScrapeRuns(limit = 5) {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     async function loadScrapeRuns() {
       setState((current) => ({ ...current, isLoading: true, error: null }));
       try {
-        const response = await fetchScrapeRuns(limit);
+        const response = await fetchScrapeRuns(limit, controller.signal);
         if (isMounted) setState({ scrapeRuns: response.scrapeRuns, isLoading: false, error: null });
       } catch (error) {
         if (isMounted) {
@@ -41,6 +42,7 @@ export function useScrapeRuns(limit = 5) {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [limit, refreshKey]);
 
