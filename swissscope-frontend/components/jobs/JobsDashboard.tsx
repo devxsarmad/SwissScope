@@ -20,10 +20,11 @@ export function JobsDashboard() {
   const apiFilters = useMemo(
     () => ({
       city: filters.city,
+      company: filters.company,
       minScore: filters.minScore,
       status: filters.status,
     }),
-    [filters.city, filters.minScore, filters.status],
+    [filters.city, filters.company, filters.minScore, filters.status],
   );
   const {
     jobs,

@@ -30,7 +30,7 @@ export function JobFilters({
   return (
     <fieldset className="min-w-0 rounded-2xl border border-border/70 bg-card/95 p-4 shadow-sm shadow-slate-950/5 ring-1 ring-white/70 dark:ring-white/5">
       <legend className="sr-only">Filter saved jobs</legend>
-      <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_150px_150px_160px_auto]">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_140px_140px_140px_150px_auto]">
         <label className="relative min-w-0">
           <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -48,6 +48,13 @@ export function JobFilters({
           placeholder="City"
           value={filters.city ?? ""}
           onChange={(event) => onChange({ ...filters, city: event.target.value })}
+        />
+        <Input
+          aria-label="Company"
+          autoComplete="organization"
+          placeholder="Company"
+          value={filters.company ?? ""}
+          onChange={(event) => onChange({ ...filters, company: event.target.value })}
         />
         <Input
           aria-label="Minimum score (0 to 100)"
