@@ -61,9 +61,11 @@ export class JobCloudScraper extends BaseScraper<JobCloudPayload, RawJob, Normal
       if (rows.size >= this.config.maxJobs) break;
     }
 
+    if (searchErrors.length > 0) {
+      throw new Error(`One or more jobs.ch search requests failed: ${searchErrors.join("; ")}`);
+    }
     if (successfulSearches === 0) {
-      const details = searchErrors.length > 0 ? `: ${searchErrors.join("; ")}` : ". No search terms are configured.";
-      throw new Error(`All ${searchTerms.length} jobs.ch search requests failed${details}`);
+      throw new Error("No jobs.ch search terms are configured.");
     }
 
     const enrichedRows = await this.enrichRows([...rows.values()].slice(0, this.config.maxJobs));
