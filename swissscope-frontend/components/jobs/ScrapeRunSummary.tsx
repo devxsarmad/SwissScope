@@ -11,10 +11,10 @@ export function ScrapeRunSummary({ scrapeRuns, isLoading, error, onRetry }: { sc
   const health = getAutomationHealth(latestRun);
 
   return (
-    <Card aria-busy={isLoading} className="rounded-2xl border-primary/10 bg-gradient-to-br from-card to-muted/30">
+    <Card role="region" aria-busy={isLoading} aria-labelledby="scrape-run-heading" className="rounded-2xl border-primary/10 bg-gradient-to-br from-card to-muted/30">
       <CardHeader className="gap-2 sm:flex sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle id="scrape-run-heading" className="flex items-center gap-2 text-base">
             <RefreshCw aria-hidden="true" className="size-4 text-primary" />
             Scrape automation
           </CardTitle>
