@@ -90,7 +90,9 @@ export class JobCloudScraper extends BaseScraper<JobCloudPayload, RawJob, Normal
     url.searchParams.set("location", this.config.location ?? "Switzerland");
 
     const response = await this.request(url.toString());
-    if (typeof response.data !== "string") return [];
+    if (typeof response.data !== "string") {
+      throw new Error(`jobs.ch search for "${term}" returned a non-text response.`);
+    }
     return parseJobPostingsFromHtml(response.data).map((posting) => toRawJob(posting, this.config.baseUrl));
   }
 
