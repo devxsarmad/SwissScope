@@ -161,15 +161,15 @@ function StatCard({
 }) {
   return (
     <Card id={id} className="rounded-2xl bg-gradient-to-br from-card to-muted/35">
-      <CardHeader className="flex flex-row items-center justify-between gap-3 pb-0">
-        <CardTitle className="text-sm font-semibold text-muted-foreground">{label}</CardTitle>
-        <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon aria-hidden="true" className="size-4" />
+      <dl className="px-5">
+        <div className="flex items-center justify-between gap-3">
+          <dt className="text-sm font-semibold text-muted-foreground">{label}</dt>
+          <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Icon aria-hidden="true" className="size-4" />
+          </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-2xl font-bold tracking-tight">{value}</p>
-      </CardContent>
+        <dd className="mt-4 text-2xl font-bold tracking-tight">{value}</dd>
+      </dl>
     </Card>
   );
 }
