@@ -61,6 +61,7 @@ export function JobFilters({
           aria-label="Minimum score (0 to 100)"
           min={0}
           max={100}
+          inputMode="decimal"
           step="any"
           placeholder="Min score"
           type="number"
