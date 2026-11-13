@@ -8,23 +8,33 @@ const intervalHours = parsePositiveNumber(process.env.SCRAPE_CRON_INTERVAL_HOURS
 const intervalMs = intervalHours * 60 * 60 * 1000;
 const runOnStart = process.env.SCRAPE_CRON_RUN_ON_START !== "false";
 let isRunning = false;
+let isShuttingDown = false;
+let activeScrape: Promise<void> | null = null;
 
 console.log(`SwissScope scrape scheduler started. Running every ${intervalHours} hour(s).`);
 
-if (runOnStart) {
-  void triggerScheduledScrape("startup");
-}
-
 const timer = setInterval(() => {
-  void triggerScheduledScrape("interval");
+  scheduleScrape("interval");
 }, intervalMs);
 
-async function triggerScheduledScrape(reason: "startup" | "interval") {
+if (runOnStart) {
+  scheduleScrape("startup");
+}
+
+function scheduleScrape(reason: "startup" | "interval") {
   if (isRunning) {
     console.warn(`Skipping ${reason} scrape because a previous scrape is still running.`);
     return;
   }
 
+  const task = triggerScheduledScrape(reason);
+  activeScrape = task;
+  void task.finally(() => {
+    if (activeScrape === task) activeScrape = null;
+  });
+}
+
+async function triggerScheduledScrape(reason: "startup" | "interval") {
   isRunning = true;
   console.log(`Starting ${reason} scrape at ${new Date().toISOString()}`);
 
@@ -41,8 +51,22 @@ async function triggerScheduledScrape(reason: "startup" | "interval") {
 
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.on(signal, () => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
     clearInterval(timer);
-    void prisma.$disconnect().finally(() => process.exit(0));
+
+    void (async () => {
+      try {
+        if (activeScrape) await activeScrape;
+        await prisma.$disconnect();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`Failed to shut down cleanly: ${message}`);
+        process.exitCode = 1;
+      } finally {
+        process.exit();
+      }
+    })();
   });
 }
 
