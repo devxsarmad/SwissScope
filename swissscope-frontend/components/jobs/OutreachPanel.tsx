@@ -35,6 +35,7 @@ export function OutreachPanel({ job }: { job: Job }) {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [saveFailed, setSaveFailed] = useState(false);
+  const hasUnsavedChanges = JSON.stringify(form) !== JSON.stringify(toFormState(savedJob));
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,9 +102,9 @@ export function OutreachPanel({ job }: { job: Job }) {
             >
               {message ?? (isSaving ? "Saving outreach details..." : "Track contacts, applications, and next follow-up steps for this role.")}
             </p>
-            <Button className="gap-2" disabled={isSaving} type="submit">
+            <Button className="gap-2" disabled={isSaving || !hasUnsavedChanges} type="submit">
               <Save aria-hidden="true" className="size-4" />
-              {isSaving ? "Saving..." : "Save outreach"}
+              {isSaving ? "Saving..." : hasUnsavedChanges ? "Save outreach" : "Saved"}
             </Button>
           </div>
         </form>
