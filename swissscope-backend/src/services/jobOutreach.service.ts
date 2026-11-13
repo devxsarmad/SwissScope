@@ -65,10 +65,14 @@ function parseNullableString(value: unknown, fieldName: string): string | null |
 
 function parseNullableDate(value: unknown, fieldName: string): Date | null | Error {
   if (value === null || value === "") return null;
-  if (typeof value !== "string") return new Error(`${fieldName} must be an ISO date string or null.`);
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Error(`${fieldName} must be an ISO date string or null.`);
+  }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return new Error(`${fieldName} must be a valid date.`);
+  const date = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
+    return new Error(`${fieldName} must be a valid calendar date.`);
+  }
 
   return date;
 }
