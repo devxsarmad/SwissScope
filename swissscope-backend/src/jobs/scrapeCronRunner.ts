@@ -2,6 +2,8 @@ import "dotenv/config";
 import { prisma } from "../prisma/client.js";
 import { runScheduledScrape } from "./runScheduledScrape.js";
 
+const MAX_TIMER_DELAY_MS = 2_147_483_647;
+const MAX_INTERVAL_HOURS = MAX_TIMER_DELAY_MS / (60 * 60 * 1000);
 const intervalHours = parsePositiveNumber(process.env.SCRAPE_CRON_INTERVAL_HOURS) ?? 3;
 const intervalMs = intervalHours * 60 * 60 * 1000;
 const runOnStart = process.env.SCRAPE_CRON_RUN_ON_START !== "false";
@@ -47,5 +49,5 @@ for (const signal of ["SIGINT", "SIGTERM"] as const) {
 function parsePositiveNumber(value: string | undefined): number | null {
   if (!value) return null;
   const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  return Number.isFinite(parsed) && parsed > 0 && parsed <= MAX_INTERVAL_HOURS ? parsed : null;
 }
