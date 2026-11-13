@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, BriefcaseBusiness, Building2, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,14 +17,16 @@ const EMPTY_FILTERS: JobFiltersValue = {};
 
 export function JobsDashboard() {
   const [filters, setFilters] = useState<JobFiltersValue>(EMPTY_FILTERS);
+  const debouncedCity = useDebouncedValue(filters.city, 300);
+  const debouncedCompany = useDebouncedValue(filters.company, 300);
   const apiFilters = useMemo(
     () => ({
-      city: filters.city,
-      company: filters.company,
+      city: debouncedCity,
+      company: debouncedCompany,
       minScore: filters.minScore,
       status: filters.status,
     }),
-    [filters.city, filters.company, filters.minScore, filters.status],
+    [debouncedCity, debouncedCompany, filters.minScore, filters.status],
   );
   const {
     jobs,
@@ -186,6 +188,17 @@ function applyClientFilters(jobs: Job[], filters: JobFiltersValue): Job[] {
     );
     return queryTerms.every((term) => searchableText.includes(term));
   });
+}
+
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setDebouncedValue(value), delayMs);
+    return () => window.clearTimeout(timeout);
+  }, [value, delayMs]);
+
+  return debouncedValue;
 }
 
 function normalizeSearchText(value: string): string {
