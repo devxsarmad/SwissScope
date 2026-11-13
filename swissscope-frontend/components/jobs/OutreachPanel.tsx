@@ -97,10 +97,12 @@ export function OutreachPanel({ job }: { job: Job }) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p
               aria-live="polite"
-              className={`text-sm ${saveFailed ? "text-destructive" : "text-muted-foreground"}`}
-              role={saveFailed ? "alert" : "status"}
+              className={`text-sm ${saveFailed && !hasUnsavedChanges ? "text-destructive" : "text-muted-foreground"}`}
+              role={saveFailed && !hasUnsavedChanges ? "alert" : "status"}
             >
-              {message ?? (isSaving ? "Saving outreach details..." : "Track contacts, applications, and next follow-up steps for this role.")}
+              {hasUnsavedChanges
+                ? "Unsaved changes. Save to keep them."
+                : message ?? (isSaving ? "Saving outreach details..." : "Track contacts, applications, and next follow-up steps for this role.")}
             </p>
             <Button className="gap-2" disabled={isSaving || !hasUnsavedChanges} type="submit">
               <Save aria-hidden="true" className="size-4" />
