@@ -60,8 +60,9 @@ export class ArbeitSwissScraper extends BaseScraper<ArbeitSwissPayload, RawJob, 
   async fetch(): Promise<ArbeitSwissPayload> {
     const rows = new Map<string, JobRoomSearchItem>();
     const errors: string[] = [];
+    const searchTerms = this.config.searchTerms ?? DEFAULT_SEARCH_TERMS;
 
-    for (const term of this.config.searchTerms ?? DEFAULT_SEARCH_TERMS) {
+    for (const term of searchTerms) {
       let searchRows: JobRoomSearchItem[];
 
       try {
@@ -77,8 +78,11 @@ export class ArbeitSwissScraper extends BaseScraper<ArbeitSwissPayload, RawJob, 
       }
     }
 
-    if (rows.size === 0 && errors.length > 0) {
-      throw new Error(`Every Job-Room search failed: ${errors.join("; ")}`);
+    if (errors.length > 0) {
+      throw new Error(`One or more Job-Room searches failed: ${errors.join("; ")}`);
+    }
+    if (searchTerms.length === 0) {
+      throw new Error("No Job-Room search terms are configured.");
     }
 
     return { rows: [...rows.values()] };
