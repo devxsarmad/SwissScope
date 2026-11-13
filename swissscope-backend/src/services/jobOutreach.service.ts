@@ -14,6 +14,14 @@ export type JobOutreachUpdate = {
 
 export const OUTREACH_STATUSES = ["NOT_STARTED", "CONTACTED", "FOLLOWED_UP", "RESPONDED", "INTERVIEWING", "CLOSED"] as const satisfies readonly OutreachStatus[];
 
+const MAX_STRING_LENGTHS = {
+  notes: 10_000,
+  contactName: 200,
+  contactEmail: 320,
+  contactLinkedIn: 2_048,
+  interviewNotes: 10_000,
+} as const;
+
 export function parseJobOutreachUpdate(value: unknown): JobOutreachUpdate | Error {
   if (!isRecord(value)) return new Error("Request body must be a JSON object.");
 
@@ -60,6 +68,9 @@ function parseNullableString(value: unknown, fieldName: string): string | null |
   if (typeof value !== "string") return new Error(`${fieldName} must be a string or null.`);
 
   const trimmed = value.trim();
+  if (trimmed.length > MAX_STRING_LENGTHS[fieldName as keyof typeof MAX_STRING_LENGTHS]) {
+    return new Error(`${fieldName} must be ${MAX_STRING_LENGTHS[fieldName as keyof typeof MAX_STRING_LENGTHS]} characters or fewer.`);
+  }
   return trimmed || null;
 }
 

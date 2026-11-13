@@ -83,16 +83,16 @@ export function OutreachPanel({ job }: { job: Job }) {
                 ))}
               </select>
             </label>
-            <TextInput label="Contact name" autoComplete="name" icon={Contact} value={form.contactName} onChange={(contactName) => setForm((current) => ({ ...current, contactName }))} />
-            <TextInput label="Contact email" type="email" autoComplete="email" value={form.contactEmail} onChange={(contactEmail) => setForm((current) => ({ ...current, contactEmail }))} />
-            <TextInput label="LinkedIn URL" type="url" value={form.contactLinkedIn} onChange={(contactLinkedIn) => setForm((current) => ({ ...current, contactLinkedIn }))} />
+            <TextInput label="Contact name" maxLength={200} autoComplete="name" icon={Contact} value={form.contactName} onChange={(contactName) => setForm((current) => ({ ...current, contactName }))} />
+            <TextInput label="Contact email" maxLength={320} type="email" autoComplete="email" value={form.contactEmail} onChange={(contactEmail) => setForm((current) => ({ ...current, contactEmail }))} />
+            <TextInput label="LinkedIn URL" maxLength={2048} type="url" value={form.contactLinkedIn} onChange={(contactLinkedIn) => setForm((current) => ({ ...current, contactLinkedIn }))} />
             <TextInput label="Applied date" icon={CalendarDays} type="date" value={form.appliedAt} onChange={(appliedAt) => setForm((current) => ({ ...current, appliedAt }))} />
             <TextInput label="Follow-up date" icon={CalendarDays} type="date" value={form.followUpAt} onChange={(followUpAt) => setForm((current) => ({ ...current, followUpAt }))} />
             <TextInput label="Last contacted" icon={CalendarDays} type="date" value={form.lastContactedAt} onChange={(lastContactedAt) => setForm((current) => ({ ...current, lastContactedAt }))} />
           </div>
 
-          <TextArea label="Personal notes" value={form.notes} onChange={(notes) => setForm((current) => ({ ...current, notes }))} />
-          <TextArea label="Interview notes" value={form.interviewNotes} onChange={(interviewNotes) => setForm((current) => ({ ...current, interviewNotes }))} />
+          <TextArea label="Personal notes" maxLength={10000} value={form.notes} onChange={(notes) => setForm((current) => ({ ...current, notes }))} />
+          <TextArea label="Interview notes" maxLength={10000} value={form.interviewNotes} onChange={(interviewNotes) => setForm((current) => ({ ...current, interviewNotes }))} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p
@@ -119,6 +119,7 @@ function TextInput({
   onChange,
   type = "text",
   autoComplete,
+  maxLength,
   icon: Icon,
 }: {
   label: string;
@@ -126,6 +127,7 @@ function TextInput({
   onChange: (value: string) => void;
   type?: string;
   autoComplete?: string;
+  maxLength?: number;
   icon?: React.ComponentType<{ className?: string }>;
 }) {
   const id = `outreach-${label.toLowerCase().replaceAll(" ", "-")}`;
@@ -135,13 +137,13 @@ function TextInput({
       <label htmlFor={id}>{label}</label>
       <div className="relative">
         {Icon ? <Icon aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /> : null}
-        <Input id={id} className={Icon ? "pl-9" : undefined} type={type} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} />
+        <Input id={id} className={Icon ? "pl-9" : undefined} type={type} autoComplete={autoComplete} maxLength={maxLength} value={value} onChange={(event) => onChange(event.target.value)} />
       </div>
     </div>
   );
 }
 
-function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function TextArea({ label, value, onChange, maxLength }: { label: string; value: string; onChange: (value: string) => void; maxLength: number }) {
   const id = `outreach-${label.toLowerCase().replaceAll(" ", "-")}`;
 
   return (
@@ -149,6 +151,7 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
       <label htmlFor={id}>{label}</label>
       <textarea
         id={id}
+        maxLength={maxLength}
         className="min-h-28 rounded-xl border border-input/80 bg-card/80 px-3 py-2 text-sm text-foreground shadow-xs outline-none transition-colors placeholder:text-muted-foreground/80 focus-visible:border-primary/70 focus-visible:ring-3 focus-visible:ring-primary/20"
         value={value}
         onChange={(event) => onChange(event.target.value)}
